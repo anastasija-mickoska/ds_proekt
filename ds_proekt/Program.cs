@@ -1,3 +1,12 @@
+using FirebaseAdmin;
+using Google.Apis.Auth.OAuth2;
+using Microsoft.AspNetCore.Builder.Extensions;
+
+FirebaseApp.Create(new AppOptions
+{
+    Credential = GoogleCredential.FromFile("C:\\Users\\Anastasija\\source\\repos\\ds_proekt\\ds-proekt-baa0c-firebase-adminsdk-fbsvc-a3c65714d0.json")
+});
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.

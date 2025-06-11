@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 namespace ds_proekt.Models;
 public class Parfume
 {
-        public int ProductId { get; set; }
+        public int ParfumeId { get; set; }
         [Required]
         public string Name { get; set; }
         [Required]

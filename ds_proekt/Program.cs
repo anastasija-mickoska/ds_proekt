@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Builder.Extensions;
 
 FirebaseApp.Create(new AppOptions
 {
-    Credential = GoogleCredential.FromFile("C:\\Users\\Anastasija\\source\\repos\\ds_proekt\\ds-proekt-baa0c-firebase-adminsdk-fbsvc-a3c65714d0.json")
+    Credential = GoogleCredential.FromFile("..\\ds-proekt-baa0c-firebase-adminsdk-fbsvc-a3c65714d0.json")
 });
 
 var builder = WebApplication.CreateBuilder(args);

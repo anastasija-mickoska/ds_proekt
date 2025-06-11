@@ -7,10 +7,10 @@ namespace ds_proekt.Controllers
     public class OrderController : Controller
     {
         private readonly FirebaseParfumeService _firebaseService = new FirebaseParfumeService();
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-
-            return View();
+            var orders = await _firebaseService.GetOrdersAsync();
+            return View(orders);
         }
 
         public async Task<ActionResult> AddOrder(Order order)

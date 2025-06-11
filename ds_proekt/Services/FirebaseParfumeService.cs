@@ -84,6 +84,14 @@ namespace ds_proekt.Services
                 .Child("Orders")
                 .PostAsync(order);
         }
+        public async Task<List<Order>> GetOrdersAsync()
+        {
+            var orders = await _firebaseClient
+                .Child("Orders")
+                .OnceAsync<Order>();
+
+            return orders.Select(o => o.Object).ToList();
+        }
         public async Task AddToCartAsync(CartItem item)
         {
             await _firebaseClient

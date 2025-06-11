@@ -1,0 +1,34 @@
+﻿@model ParfumeDetailsViewModel
+
+@{
+    ViewData["Title"] = "Perfume Details";
+}
+
+<h2>@Model.Parfume.Name</h2>
+
+<p><strong>Brand:</strong> @Model.Parfume.Brand</p>
+<p><strong>Price:</strong> @Model.Parfume.Price.ToString("C")</p>
+
+<a class="btn btn-success" asp-action="AddToCart" asp-route-id="@Model.Parfume.ParfumeId">Add to Cart</a>
+
+<hr />
+
+<h4>Reviews</h4>
+
+@if (Model.Reviews != null && Model.Reviews.Any())
+{
+    <ul class="list-group">
+        @foreach (var review in Model.Reviews)
+        {
+            <li class="list-group-item">
+                <strong>@review.UserName:</strong> @review.Comment
+                <span class="float-end">Rating: @review.Rating/5</span>
+            </li>
+        }
+    </ul>
+}
+else
+{
+    <p>No reviews yet.</p>
+}
+

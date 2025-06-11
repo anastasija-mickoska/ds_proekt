@@ -1,0 +1,45 @@
+﻿@model List<Review>
+
+@{
+    ViewData["Title"] = "Reviews";
+    var searchString = ViewBag.SearchString as string;
+}
+
+<h2>Reviews</h2>
+
+<form method="get" asp-controller="Review" asp-action="Index">
+    <div class="input-group mb-3">
+        <input type="text" name="searchString" class="form-control" placeholder="Search by perfume name..." value="@searchString" />
+        <button type="submit" class="btn btn-primary">Search</button>
+    </div>
+</form>
+
+@if (Model != null && Model.Any())
+{
+    <table class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>Parfume ID</th>
+                <th>User</th>
+                <th>Comment</th>
+                <th>Rating</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var review in Model)
+            {
+                <tr>
+                    <td>@review.ParfumeId</td>
+                    <td>@review.UserName</td>
+                    <td>@review.Comment</td>
+                    <td>@review.Rating</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>No reviews found.</p>
+}
+

@@ -1,0 +1,38 @@
+﻿@model List<Parfume>
+
+@{
+    ViewData["Title"] = "Perfume Catalog";
+}
+
+<h2>Perfume Catalog</h2>
+
+<form method="get" asp-action="Index">
+    <div class="input-group mb-4">
+        <input type="text" name="searchString" class="form-control" placeholder="Search perfumes..." />
+        <button class="btn btn-primary">Search</button>
+    </div>
+</form>
+
+<div class="row row-cols-1 row-cols-md-3 g-4">
+    @foreach (var parfume in Model)
+    {
+        <div class="col">
+            <div class="card h-100 shadow-sm">
+                 @if (!string.IsNullOrEmpty(parfume.ImageUrl))
+        {
+            <img src="@parfume.ImageUrl" class="card-img-top" alt="@parfume.Name" style="height: 200px; object-fit: cover;" />
+        }
+                <div class="card-body">
+                    <h5 class="card-title">@parfume.Name</h5>
+                    <p class="card-text"><strong>Brand:</strong> @parfume.Brand</p>
+                    <p class="card-text"><strong>Price:</strong> @parfume.Price.ToString("C")</p>
+                </div>
+                <div class="card-footer d-flex justify-content-between">
+                    <a class="btn btn-outline-primary" asp-action="Details" asp-route-id="@parfume.ParfumeId">Details</a>
+                    <a class="btn btn-success" asp-action="AddToCart" asp-route-id="@parfume.ParfumeId">Add to Cart</a>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+

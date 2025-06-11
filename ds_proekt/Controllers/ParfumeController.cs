@@ -28,8 +28,9 @@ namespace ds_proekt.Controllers
             var cartItem = new CartItem
             {
                 ParfumeId = parfume.ParfumeId,
+                ParfumeName = parfume.Name,
                 Quantity = 1,
-                TotalPrice = parfume.Price
+                Price = parfume.Price
 
             };
 

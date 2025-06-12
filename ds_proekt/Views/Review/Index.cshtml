@@ -6,6 +6,14 @@
 }
 
 <h2>Reviews</h2>
+@{
+    string role = Context.Session.GetString("UserRole");
+}
+
+@if (role == "user")
+{
+    <a class="btn btn-primary" asp-controller="Review"  asp-action="Create">Add Review</a>
+}
 
 <form method="get" asp-controller="Review" asp-action="Index">
     <div class="input-group mb-3">

@@ -4,7 +4,17 @@
     ViewData["Title"] = "Perfume Catalog";
 }
 
+
+
 <h2>Perfume Catalog</h2>
+
+@{
+    string role = Context.Session.GetString("UserRole");
+}
+
+@if (role == "admin"){
+<button class="btn btn-primary" asp-action="Create">Create</button>
+}
 
 <form method="get" asp-action="Index">
     <div class="input-group mb-4">

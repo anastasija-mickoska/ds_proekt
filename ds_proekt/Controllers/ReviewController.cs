@@ -3,6 +3,7 @@ using ds_proekt.Services;
 using Microsoft.AspNetCore.Mvc;
 using FirebaseAdmin;
 using Firebase;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace ds_proekt.Controllers
 {
@@ -21,20 +22,30 @@ namespace ds_proekt.Controllers
         {
             var allParfumes = await _firestoreService.GetParfumesAsync();
 
-            var filteredParfumes = string.IsNullOrWhiteSpace(searchString)
-                ? allParfumes
+            var matchingParfumeIds = string.IsNullOrWhiteSpace(searchString)
+                ? allParfumes.Select(p => p.ParfumeId).ToList()
                 : allParfumes
                     .Where(p => p.Name.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+                    .Select(p => p.ParfumeId)
                     .ToList();
+
+            var allReviews = await _firestoreService.GetReviewsAsync();
+
+            var filteredReviews = allReviews
+                .Where(r => matchingParfumeIds.Contains(r.ParfumeId))
+                .ToList();
 
             ViewBag.SearchString = searchString;
 
-            return View(filteredParfumes);
+            return View(filteredReviews);
         }
 
-        [HttpPost("submit")]
+
+        [HttpPost]
         public async Task<IActionResult> Create([FromHeader(Name = "Authorization")] string idToken, [FromBody] Review review)
         {
+            
+
             if (string.IsNullOrEmpty(idToken)) return Unauthorized("Missing token");
 
             var decodedToken = await _authService.VerifyIdTokenAsync(idToken.Replace("Bearer ", ""));
@@ -46,6 +57,22 @@ namespace ds_proekt.Controllers
 
             await _firestoreService.AddReviewAsync(review);
             return Ok("Review submitted");
+        }
+
+        [HttpGet]
+        public async Task<IActionResult > Create()
+
+        {
+            var products = await _firestoreService.GetParfumesAsync();
+
+            var selectList = products.Select(p => new SelectListItem
+            {
+                Value = p.ParfumeId,
+                Text = p.Name
+            }).ToList();
+
+            ViewData["ParfumeId"] = selectList;
+            return View();
         }
     }
 }

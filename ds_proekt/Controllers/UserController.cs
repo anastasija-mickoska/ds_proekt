@@ -66,6 +66,7 @@ namespace ds_proekt.Controllers
                 HttpContext.Session.SetString("FirebaseToken", await authLink.User.GetIdTokenAsync());
                 HttpContext.Session.SetString("UserId", authLink.User.Uid);
                 HttpContext.Session.SetString("UserRole", role);
+                HttpContext.Session.SetString("UserEmail", email);
 
                 return RedirectToAction("Index", "Parfume");
             }

@@ -14,10 +14,17 @@ namespace ds_proekt.Controllers
 {
     public class ParfumeController : Controller
     {
-        private readonly FirebaseParfumeService _firebaseService = new FirebaseParfumeService();
-        public async Task<ActionResult> AddToCart(int id)
+        private readonly FirebaseAuthService _authService;
+        private readonly FirebaseParfumeService _firestoreService;
+
+        public ParfumeController(FirebaseAuthService authService, FirebaseParfumeService firestoreService)
         {
-            var parfume = await _firebaseService.GetParfumeByIdAsync(id);
+            _authService = authService;
+            _firestoreService = firestoreService;
+        }
+        public async Task<ActionResult> AddToCart(string id)
+        {
+            var parfume = await _firestoreService.GetParfumeByIdAsync(id);
 
             if (parfume == null)
             {
@@ -33,7 +40,7 @@ namespace ds_proekt.Controllers
 
             };
 
-            await _firebaseService.AddToCartAsync(cartItem);
+            await _firestoreService.AddToCartAsync(cartItem);
             return RedirectToAction("Index", "Order");
         }
 
@@ -41,7 +48,7 @@ namespace ds_proekt.Controllers
         {
             if (ModelState.IsValid)
             {
-                await _firebaseService.AddParfumeAsync(parfume);
+                await _firestoreService.AddParfumeAsync(parfume);
                 return RedirectToAction("Index");
             }
             return View(parfume);
@@ -49,7 +56,7 @@ namespace ds_proekt.Controllers
 
         public async Task<ActionResult> Index(string searchString)
         {
-            var parfumes = await _firebaseService.GetParfumesAsync();
+            var parfumes = await _firestoreService.GetParfumesAsync();
 
             if (!String.IsNullOrEmpty(searchString))
             {
@@ -60,16 +67,16 @@ namespace ds_proekt.Controllers
 
             return View(parfumes);
         }
-        public async Task<ActionResult> Details(int id)
+        public async Task<ActionResult> Details(string id)
         {
-            var parfume = await _firebaseService.GetParfumeByIdAsync(id);
+            var parfume = await _firestoreService.GetParfumeByIdAsync(id);
 
             if (parfume == null)
             {
                 return NotFound();
             }
 
-            var reviews = await _firebaseService.GetReviewsByProductAsync(id);
+            var reviews = await _firestoreService.GetReviewsByProductAsync(id);
 
             var viewModel = new ParfumeDetailsViewModel
             {

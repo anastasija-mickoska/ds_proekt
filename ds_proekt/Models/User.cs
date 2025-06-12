@@ -6,7 +6,7 @@ namespace ds_proekt.Models
     public class User
     {
         [FirestoreProperty]
-        public int Id { get; set; }
+        public string Id { get; set; }
         [FirestoreProperty]
         public string Name { get; set; }
         [FirestoreProperty]
@@ -14,6 +14,8 @@ namespace ds_proekt.Models
         [FirestoreProperty]
         public string Password { get; set; }
 
+        [FirestoreProperty]
+        public string Role { get; set; }
 
     }
 }

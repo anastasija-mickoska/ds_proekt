@@ -6,7 +6,7 @@ namespace ds_proekt.Models;
 public class Parfume
 {
     [FirestoreProperty]
-    public int ParfumeId { get; set; }
+    public string ParfumeId { get; set; }
         [Required]
     [FirestoreProperty]
     public string Name { get; set; }

@@ -24,13 +24,12 @@ namespace ds_proekt.Controllers
         [HttpPost]
         public async Task<IActionResult> Register(User user)
         {
-            if (!ModelState.IsValid)
+            if (ModelState.IsValid)
                 return View(user);
 
             try
             {
                 var result = await _authService.RegisterAsync(user);
-             //   await _authService.StoreUserInRealtimeDb(user);
 
                 TempData["Message"] = "Registration successful!";
                 return RedirectToAction("Login");
@@ -38,6 +37,7 @@ namespace ds_proekt.Controllers
             catch (Exception ex)
             {
                 ModelState.AddModelError("", $"Registration failed: {ex.Message}");
+                Console.WriteLine(ex.Message);
                 return View(user);
             }
         }
@@ -53,36 +53,28 @@ namespace ds_proekt.Controllers
             try
             {
                 var authLink = await _authService.LoginAsync(email, password);
-                var idToken = await authLink.User.GetIdTokenAsync();
 
-                var verifiedToken = await _authService.VerifyIdTokenAsync(idToken); 
+                if (authLink == null || authLink.User == null)
+                {
+                    ModelState.AddModelError("", "Login failed: Unable to authenticate.");
+                    return View();
+                }
 
-                HttpContext.Session.SetString("FirebaseToken", idToken);
+                var userDoc = await _authService.GetUserDocumentByIdAsync(authLink.User.Uid);
+                string role = userDoc.ContainsKey("Role") ? userDoc["Role"].ToString() : "user";
+
+                HttpContext.Session.SetString("FirebaseToken", await authLink.User.GetIdTokenAsync());
                 HttpContext.Session.SetString("UserId", authLink.User.Uid);
-                HttpContext.Session.SetString("UserEmail", email);
+                HttpContext.Session.SetString("UserRole", role);
 
                 return RedirectToAction("Index", "Parfume");
             }
             catch (Exception ex)
             {
-                ModelState.AddModelError(string.Empty, "Login failed: " + ex.Message);
+                ModelState.AddModelError("", $"Login error: {ex.Message}");
                 return View();
             }
         }
-
-
-        //// PROFILE
-        //public IActionResult Profile()
-        //{
-        //    var userEmail = HttpContext.Session.GetString("UserEmail");
-        //    if (string.IsNullOrEmpty(userEmail))
-        //        return RedirectToAction("Login");
-
-        //    ViewBag.Email = userEmail;
-        //    ViewBag.UserId = HttpContext.Session.GetString("UserId");
-
-        //    return View();
-        //}
 
         // LOGOUT
         public IActionResult Logout()
@@ -92,3 +84,4 @@ namespace ds_proekt.Controllers
         }
     }
 }
+

@@ -7,7 +7,7 @@ namespace ds_proekt.Models
     public class Brand
     {
         [FirestoreProperty]
-        public int BrandId { get; set; }
+        public string BrandId { get; set; }
         [Required]
         [FirestoreProperty]
         public string Name { get; set; }

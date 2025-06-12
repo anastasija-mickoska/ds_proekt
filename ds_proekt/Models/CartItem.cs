@@ -6,11 +6,11 @@ namespace ds_proekt.Models
     public class CartItem
     {
         [FirestoreProperty]
-        public int Id { get; set; }
+        public string Id { get; set; }
         [FirestoreProperty]
         public string UserId { get; set; }
         [FirestoreProperty]
-        public int ParfumeId { get; set; }
+        public string ParfumeId { get; set; }
         [FirestoreProperty]
         public string ParfumeName { get; set; }
         [FirestoreProperty]

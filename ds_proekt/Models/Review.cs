@@ -7,9 +7,9 @@ namespace ds_proekt.Models
     public class Review
     {
         [FirestoreProperty]
-        public int ReviewId { get; set; }
+        public string ReviewId { get; set; }
         [FirestoreProperty]
-        public int ParfumeId { get; set; }
+        public string ParfumeId { get; set; }
         [FirestoreProperty]
         public string UserId { get; set; }
         [FirestoreProperty]

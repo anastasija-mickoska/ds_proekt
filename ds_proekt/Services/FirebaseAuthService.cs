@@ -11,17 +11,6 @@ public class FirebaseAuthService
     private readonly FirebaseAuthClient _client;
     private readonly FirestoreDb _firestoreDb;
 
-    static FirebaseAuthService()
-    {
-        if (FirebaseApp.DefaultInstance == null)
-        {
-            FirebaseApp.Create(new AppOptions
-            {
-                Credential = GoogleCredential.FromFile("../ds-proekt-baa0c-firebase-adminsdk-fbsvc-a3c65714d0.json")
-            });
-        }
-    }
-
     public FirebaseAuthService()
     {
         _firestoreDb = FirestoreDb.Create("ds-proekt-baa0c");
@@ -44,7 +33,8 @@ public class FirebaseAuthService
         var userData = new Dictionary<string, object>
         {
             { "Email", user.Email },
-            { "Name", user.Name }
+            { "Name", user.Name },
+            { "Role", user.Role ?? "user" } 
         };
 
         DocumentReference docRef = _firestoreDb.Collection("users").Document(uid);
@@ -67,5 +57,10 @@ public class FirebaseAuthService
         {
             return null;
         }
+    }
+    public async Task<Dictionary<string, object>> GetUserDocumentByIdAsync(string uid)
+    {
+        var doc = await _firestoreDb.Collection("users").Document(uid).GetSnapshotAsync();
+        return doc.Exists ? doc.ToDictionary() : new Dictionary<string, object>();
     }
 }

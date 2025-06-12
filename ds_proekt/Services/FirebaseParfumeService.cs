@@ -10,9 +10,6 @@ namespace ds_proekt.Services
 
         public FirebaseParfumeService()
         {
-            string pathToKey = "../ds-proekt-baa0c-firebase-adminsdk-fbsvc-a3c65714d0.json";
-            Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", pathToKey);
-
             _firestoreDb = FirestoreDb.Create("ds-proekt-baa0c"); 
         }
 
@@ -55,7 +52,7 @@ namespace ds_proekt.Services
             return snapshot.Documents.Select(d => d.ConvertTo<Review>()).ToList();
         }
 
-        public async Task<List<Review>> GetReviewsByProductAsync(int parfumeId)
+        public async Task<List<Review>> GetReviewsByProductAsync(string parfumeId)
         {
             QuerySnapshot snapshot = await _firestoreDb.Collection("Reviews").WhereEqualTo("ParfumeId", parfumeId).GetSnapshotAsync();
             return snapshot.Documents.Select(d => d.ConvertTo<Review>()).ToList();
@@ -71,9 +68,9 @@ namespace ds_proekt.Services
             return snapshot.Documents.Select(d => d.ConvertTo<Order>()).ToList();
         }
 
-        public async Task<Order> GetOrderByIdAsync(int orderId)
+        public async Task<Order> GetOrderByUserIdAsync(int userId)
         {
-            QuerySnapshot snapshot = await _firestoreDb.Collection("Orders").WhereEqualTo("Id", orderId).Limit(1).GetSnapshotAsync();
+            QuerySnapshot snapshot = await _firestoreDb.Collection("Orders").WhereEqualTo("UserId", userId).WhereEqualTo("OrderDate", null).Limit(1).GetSnapshotAsync();
             return snapshot.Documents.FirstOrDefault()?.ConvertTo<Order>();
         }
         public async Task AddToCartAsync(CartItem item)

@@ -6,11 +6,11 @@ namespace ds_proekt.Models
     public class Order
     {
         [FirestoreProperty]
-        public int Id { get; set; }
+        public string Id { get; set; }
         [FirestoreProperty]
         public string UserId { get; set; }
         [FirestoreProperty]
-        public DateTime OrderDate { get; set; }
+        public DateTime? OrderDate { get; set; }
         [FirestoreProperty]
         public decimal TotalPrice { get; set; }
         [FirestoreProperty]

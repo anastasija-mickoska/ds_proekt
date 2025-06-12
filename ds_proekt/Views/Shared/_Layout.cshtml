@@ -26,9 +26,9 @@
                             <a class="nav-link text-dark" asp-area="" asp-controller="Review" asp-action="Index">Reviews</a>
                         </li>
                         @{
-                            var isLoggedIn = Context.Session.GetString("UserId") != null;
+                            string isLoggedIn = Context.Session.GetString("UserId");
                         }
-                        @if (!isLoggedIn)
+                        @if (isLoggedIn==null)
                         {
                         <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="User" asp-action="Login">Login</a>
@@ -40,9 +40,6 @@
                         <a class="nav-link text-dark" asp-area="" asp-controller="User" asp-action="Logout">Logout</a>
                         </li>
                         }
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="User" asp-action="Logout">Logout</a>
-                        </li>
                     </ul>
                 </div>
             </div>

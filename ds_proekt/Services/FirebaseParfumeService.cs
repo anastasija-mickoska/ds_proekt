@@ -1,132 +1,99 @@
 ﻿using ds_proekt.Models;
-using Firebase.Database;
-using Firebase.Database.Query;
+using Google.Cloud.Firestore;
 using System.Threading.Tasks;
 
 namespace ds_proekt.Services
 {
     public class FirebaseParfumeService
     {
-        private readonly FirebaseClient _firebaseClient;
+        private readonly FirestoreDb _firestoreDb;
 
         public FirebaseParfumeService()
         {
-            _firebaseClient = new FirebaseClient("https://ds-proekt-baa0c-default-rtdb.europe-west1.firebasedatabase.app/");
+            string pathToKey = "../ds-proekt-baa0c-firebase-adminsdk-fbsvc-a3c65714d0.json";
+            Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", pathToKey);
+
+            _firestoreDb = FirestoreDb.Create("ds-proekt-baa0c"); 
         }
 
         public async Task AddParfumeAsync(Parfume parfume)
         {
-            await _firebaseClient
-                .Child("Parfumes")
-                .PostAsync(parfume);
+            CollectionReference parfumesRef = _firestoreDb.Collection("Parfumes");
+            await parfumesRef.AddAsync(parfume);
         }
+
         public async Task<List<Parfume>> GetParfumesAsync()
         {
-            return (await _firebaseClient
-                .Child("Parfumes")
-                .OnceAsync<Parfume>())
-                .Select(item => item.Object)
-                .ToList();
+            QuerySnapshot snapshot = await _firestoreDb.Collection("Parfumes").GetSnapshotAsync();
+            return snapshot.Documents.Select(d => d.ConvertTo<Parfume>()).ToList();
         }
-        public async Task<Parfume> GetParfumeByIdAsync(int parfumeId)
+
+        public async Task<Parfume> GetParfumeByIdAsync(string id)
         {
-            var result = await _firebaseClient
-                .Child("Parfumes") // Make sure you're querying the right node
-                .OnceAsync<Parfume>();
-            return result
-                .FirstOrDefault(x => x.Object.ParfumeId == parfumeId)
-                ?.Object;
+            DocumentReference docRef = _firestoreDb.Collection("Parfumes").Document(id);
+            DocumentSnapshot snapshot = await docRef.GetSnapshotAsync();
+            return snapshot.Exists ? snapshot.ConvertTo<Parfume>() : null;
         }
         public async Task AddBrandAsync(Brand brand)
         {
-            await _firebaseClient
-                .Child("Brands")
-                .PostAsync(brand);
+            await _firestoreDb.Collection("Brands").AddAsync(brand);
         }
+
         public async Task<List<Brand>> GetBrandsAsync()
         {
-            return (await _firebaseClient
-                .Child("Brands")
-                .OnceAsync<Brand>())
-                .Select(item => item.Object)
-                .ToList();
+            QuerySnapshot snapshot = await _firestoreDb.Collection("Brands").GetSnapshotAsync();
+            return snapshot.Documents.Select(d => d.ConvertTo<Brand>()).ToList();
         }
         public async Task AddReviewAsync(Review review)
         {
-            await _firebaseClient
-                .Child("Reviews")
-                .PostAsync(review);
+            await _firestoreDb.Collection("Reviews").AddAsync(review);
         }
+
         public async Task<List<Review>> GetReviewsAsync()
         {
-            return (await _firebaseClient
-                .Child("Reviews")
-                .OnceAsync<Review>())
-                .Select(item => item.Object)
-                .ToList();
+            QuerySnapshot snapshot = await _firestoreDb.Collection("Reviews").GetSnapshotAsync();
+            return snapshot.Documents.Select(d => d.ConvertTo<Review>()).ToList();
         }
+
         public async Task<List<Review>> GetReviewsByProductAsync(int parfumeId)
         {
-            var allReviews = await _firebaseClient
-                .Child("Reviews")
-                .OnceAsync<Review>();
-
-            var matchingReviews = allReviews
-                .Where(x => x.Object.ParfumeId == parfumeId)
-                .Select(x => x.Object)
-                .ToList();
-
-            return matchingReviews;
+            QuerySnapshot snapshot = await _firestoreDb.Collection("Reviews").WhereEqualTo("ParfumeId", parfumeId).GetSnapshotAsync();
+            return snapshot.Documents.Select(d => d.ConvertTo<Review>()).ToList();
         }
         public async Task AddOrderAsync(Order order)
         {
-            await _firebaseClient
-                .Child("Orders")
-                .PostAsync(order);
+            await _firestoreDb.Collection("Orders").AddAsync(order);
         }
+
         public async Task<List<Order>> GetOrdersAsync()
         {
-            var orders = await _firebaseClient
-                .Child("Orders")
-                .OnceAsync<Order>();
-
-            return orders.Select(o => o.Object).ToList();
+            QuerySnapshot snapshot = await _firestoreDb.Collection("Orders").GetSnapshotAsync();
+            return snapshot.Documents.Select(d => d.ConvertTo<Order>()).ToList();
         }
 
         public async Task<Order> GetOrderByIdAsync(int orderId)
         {
-            var result = await _firebaseClient
-                .Child("Orders") 
-                .OnceAsync<Order>();
-            return result
-                .FirstOrDefault(x => x.Object.Id == orderId)
-                ?.Object;
+            QuerySnapshot snapshot = await _firestoreDb.Collection("Orders").WhereEqualTo("Id", orderId).Limit(1).GetSnapshotAsync();
+            return snapshot.Documents.FirstOrDefault()?.ConvertTo<Order>();
         }
         public async Task AddToCartAsync(CartItem item)
         {
-            await _firebaseClient
-                .Child("CartItems")
-                .PostAsync(item);
+            await _firestoreDb.Collection("CartItems").AddAsync(item);
         }
+
         public async Task<List<CartItem>> GetCartItemsAsync()
         {
-            return (await _firebaseClient
-                .Child("CartItems")
-                .OnceAsync<CartItem>())
-                .Select(item => item.Object)
-                .ToList();
+            QuerySnapshot snapshot = await _firestoreDb.Collection("CartItems").GetSnapshotAsync();
+            return snapshot.Documents.Select(d => d.ConvertTo<CartItem>()).ToList();
         }
 
-        public async Task DeleteCartItemAsync(int key)
+        public async Task DeleteCartItemAsync(int id)
         {
-            var toDelete = (await _firebaseClient
-                .Child("CartItems")
-                .OnceAsync<CartItem>())
-                .FirstOrDefault(x => x.Object.Id == key);
-
-            if (toDelete != null)
+            QuerySnapshot snapshot = await _firestoreDb.Collection("CartItems").WhereEqualTo("Id", id).Limit(1).GetSnapshotAsync();
+            var doc = snapshot.Documents.FirstOrDefault();
+            if (doc != null)
             {
-                await _firebaseClient.Child("CartItems").Child(toDelete.Key).DeleteAsync();
+                await doc.Reference.DeleteAsync();
             }
         }
     }

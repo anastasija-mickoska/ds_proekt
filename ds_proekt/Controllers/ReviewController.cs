@@ -9,41 +9,43 @@ namespace ds_proekt.Controllers
     public class ReviewController : Controller
     
     {
-        private readonly FirebaseParfumeService _firebaseService = new FirebaseParfumeService();
+        private readonly FirebaseAuthService _authService;
+        private readonly FirebaseParfumeService _firestoreService;
+
+        public ReviewController(FirebaseAuthService authService, FirebaseParfumeService firestoreService)
+        {
+            _authService = authService;
+            _firestoreService = firestoreService;
+        }
         public async Task<ActionResult> Index(string searchString)
         {
-     
-            var allParfumes = await _firebaseService.GetParfumesAsync();
+            var allParfumes = await _firestoreService.GetParfumesAsync();
 
-         
-            var matchingParfumeIds = string.IsNullOrWhiteSpace(searchString)
-                ? allParfumes.Select(p => p.ParfumeId).ToList()
+            var filteredParfumes = string.IsNullOrWhiteSpace(searchString)
+                ? allParfumes
                 : allParfumes
                     .Where(p => p.Name.Contains(searchString, StringComparison.OrdinalIgnoreCase))
-                    .Select(p => p.ParfumeId)
                     .ToList();
-
-            
-            var allReviews = await _firebaseService.GetReviewsAsync(); 
-
-           
-            var filteredReviews = allReviews
-                .Where(r => matchingParfumeIds.Contains(r.ParfumeId))
-                .ToList();
 
             ViewBag.SearchString = searchString;
 
-            return View(filteredReviews);
+            return View(filteredParfumes);
         }
 
-        public async Task<ActionResult> Create(Review review)
+        [HttpPost("submit")]
+        public async Task<IActionResult> Create([FromHeader(Name = "Authorization")] string idToken, [FromBody] Review review)
         {
-            if (ModelState.IsValid)
-            {
-                await _firebaseService.AddReviewAsync(review);
-                return RedirectToAction("Index");
-            }
-            return View(review);
+            if (string.IsNullOrEmpty(idToken)) return Unauthorized("Missing token");
+
+            var decodedToken = await _authService.VerifyIdTokenAsync(idToken.Replace("Bearer ", ""));
+            if (decodedToken == null) return Unauthorized("Invalid token");
+
+            string uid = decodedToken.Uid;
+
+            review.UserId = uid;
+
+            await _firestoreService.AddReviewAsync(review);
+            return Ok("Review submitted");
         }
     }
 }

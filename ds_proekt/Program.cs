@@ -4,14 +4,16 @@ using Microsoft.AspNetCore.Builder.Extensions;
 
 FirebaseApp.Create(new AppOptions
 {
-    Credential = GoogleCredential.FromFile("..\\ds-proekt-baa0c-firebase-adminsdk-fbsvc-a3c65714d0.json")
+    Credential = GoogleCredential.FromFile(Path.Combine(AppContext.BaseDirectory, "ds-proekt-baa0c-firebase-adminsdk-fbsvc-a3c65714d0.json")),
+    ProjectId = "ds-proekt-baa0c"
 });
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.AddSingleton<FirebaseAuthService>();
 builder.Services.AddControllersWithViews();
-builder.Services.AddScoped<FirebaseAuthService>();
+//builder.Services.AddScoped<FirebaseAuthService>();
 builder.Services.AddDistributedMemoryCache(); // Required for session
 builder.Services.AddSession(options =>
 {

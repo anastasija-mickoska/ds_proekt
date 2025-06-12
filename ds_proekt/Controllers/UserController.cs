@@ -1,7 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using ds_proekt.Models;
+﻿using ds_proekt.Models;
 using ds_proekt.Services; 
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using FirebaseAdmin;
+using FirebaseAdmin.Auth;
 
 namespace ds_proekt.Controllers
 {
@@ -27,8 +30,7 @@ namespace ds_proekt.Controllers
             try
             {
                 var result = await _authService.RegisterAsync(user);
-
-                // Optionally: Store additional user data to Realtime DB or Firestore here
+             //   await _authService.StoreUserInRealtimeDb(user);
 
                 TempData["Message"] = "Registration successful!";
                 return RedirectToAction("Login");
@@ -40,6 +42,7 @@ namespace ds_proekt.Controllers
             }
         }
 
+
         // LOGIN
         [HttpGet]
         public IActionResult Login() => View();
@@ -50,13 +53,15 @@ namespace ds_proekt.Controllers
             try
             {
                 var authLink = await _authService.LoginAsync(email, password);
-
                 var idToken = await authLink.User.GetIdTokenAsync();
+
+                var verifiedToken = await _authService.VerifyIdTokenAsync(idToken); 
 
                 HttpContext.Session.SetString("FirebaseToken", idToken);
                 HttpContext.Session.SetString("UserId", authLink.User.Uid);
+                HttpContext.Session.SetString("UserEmail", email);
 
-                return RedirectToAction("Index","Parfume");
+                return RedirectToAction("Index", "Parfume");
             }
             catch (Exception ex)
             {
@@ -64,6 +69,7 @@ namespace ds_proekt.Controllers
                 return View();
             }
         }
+
 
         //// PROFILE
         //public IActionResult Profile()

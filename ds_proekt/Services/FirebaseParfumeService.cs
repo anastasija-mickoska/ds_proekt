@@ -92,6 +92,16 @@ namespace ds_proekt.Services
 
             return orders.Select(o => o.Object).ToList();
         }
+
+        public async Task<Order> GetOrderByIdAsync(int orderId)
+        {
+            var result = await _firebaseClient
+                .Child("Orders") 
+                .OnceAsync<Order>();
+            return result
+                .FirstOrDefault(x => x.Object.Id == orderId)
+                ?.Object;
+        }
         public async Task AddToCartAsync(CartItem item)
         {
             await _firebaseClient

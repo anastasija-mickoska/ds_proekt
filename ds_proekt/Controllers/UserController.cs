@@ -56,7 +56,7 @@ namespace ds_proekt.Controllers
                 HttpContext.Session.SetString("FirebaseToken", idToken);
                 HttpContext.Session.SetString("UserId", authLink.User.Uid);
 
-                return RedirectToAction("Profile");
+                return RedirectToAction("Index","Parfume");
             }
             catch (Exception ex)
             {
@@ -65,24 +65,24 @@ namespace ds_proekt.Controllers
             }
         }
 
-        // PROFILE
-        public IActionResult Profile()
-        {
-            var userEmail = HttpContext.Session.GetString("UserEmail");
-            if (string.IsNullOrEmpty(userEmail))
-                return RedirectToAction("Login");
+        //// PROFILE
+        //public IActionResult Profile()
+        //{
+        //    var userEmail = HttpContext.Session.GetString("UserEmail");
+        //    if (string.IsNullOrEmpty(userEmail))
+        //        return RedirectToAction("Login");
 
-            ViewBag.Email = userEmail;
-            ViewBag.UserId = HttpContext.Session.GetString("UserId");
+        //    ViewBag.Email = userEmail;
+        //    ViewBag.UserId = HttpContext.Session.GetString("UserId");
 
-            return View();
-        }
+        //    return View();
+        //}
 
         // LOGOUT
         public IActionResult Logout()
         {
             HttpContext.Session.Clear();
-            return RedirectToAction("Login");
+            return RedirectToAction("Index", "Home");
         }
     }
 }

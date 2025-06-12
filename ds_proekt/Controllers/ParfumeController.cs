@@ -9,7 +9,6 @@ using ds_proekt.Models;
 using FirebaseAdmin;
 using Firebase;
 using ds_proekt.Services;
-//using ds_proekt.ViewModels;
 
 namespace ds_proekt.Controllers
 {
@@ -35,7 +34,7 @@ namespace ds_proekt.Controllers
             };
 
             await _firebaseService.AddToCartAsync(cartItem);
-            return RedirectToAction("Index");
+            return RedirectToAction("Index", "Order");
         }
 
         public async Task<ActionResult> Create(Parfume parfume)

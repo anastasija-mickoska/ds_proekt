@@ -16,7 +16,10 @@ namespace ds_proekt.Controllers
         public async Task<ActionResult> AddOrder(Order order)
         { 
             await _firebaseService.AddOrderAsync(order);
-            return RedirectToAction("Index");
+            return RedirectToAction("Index", "Home");
         }
+
+
+
     }
 }

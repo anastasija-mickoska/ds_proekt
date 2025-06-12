@@ -21,7 +21,7 @@
         @foreach (var review in Model.Reviews)
         {
             <li class="list-group-item">
-                <strong>@review.UserName:</strong> @review.Comment
+                <strong>@review.UserId:</strong> @review.Comment
                 <span class="float-end">Rating: @review.Rating/5</span>
             </li>
         }

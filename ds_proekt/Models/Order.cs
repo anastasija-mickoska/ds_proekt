@@ -15,5 +15,11 @@ namespace ds_proekt.Models
         public decimal TotalPrice { get; set; }
         [FirestoreProperty]
         public List<CartItem> Items { get; set; }
+        [FirestoreProperty]
+        public string? FullName { get; set; }
+        [FirestoreProperty]
+        public string? Address { get; set; }
+        [FirestoreProperty]
+        public string? PhoneNumber { get; set; }
     }
 }

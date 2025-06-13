@@ -1,14 +1,35 @@
-﻿@model List<ds_proekt.Models.Order>
+﻿@using ds_proekt.Models
+@model object
 
 @{
     ViewData["Title"] = "Orders";
+
+    bool isAdmin = ViewData["UserRole"]?.ToString() == "admin";
+
+    List<Order> orderList = new();
+
+    if (isAdmin && Model is List<Order> adminOrders)
+    {
+        orderList = adminOrders;
+    }
+    else if (!isAdmin && Model is Order userOrder && userOrder != null)
+    {
+        orderList.Add(userOrder);
+    }
 }
 
-<h2>Orders</h2>
-
-@if (Model == null || !Model.Any())
+@if(isAdmin)
 {
-    <p>No orders found.</p>
+    <h2>Orders</h2>
+}
+else {
+    <h2>Cart</h2>
+}
+
+
+@if (!orderList.Any())
+{
+    <p>No items found.</p>
 }
 else
 {
@@ -24,19 +45,28 @@ else
             </tr>
         </thead>
         <tbody>
-            @foreach (var order in Model)
+            @foreach (var order in orderList)
             {
-                foreach (var item in order.Items)
+                if (order.Items != null)
                 {
-                    <tr>
-                        <td>@order.Id</td>
-                        <td>@order.UserId</td>
-                        <td>@item.ParfumeId</td>
-                        <td>@item.Quantity</td>
-                        <td>@order.TotalPrice.ToString("C")</td>
-                    </tr>
+                    foreach (var item in order.Items)
+                    {
+                        <tr>
+                            <td>@order.Id</td>
+                            <td>@order.UserId</td>
+                            <td>@item.ParfumeId</td>
+                            <td>@item.Quantity</td>
+                            <td>@order.TotalPrice.ToString("C")</td>
+                            <td>@(order.OrderDate?.ToString("g") ?? "In Progress")</td>
+                        </tr>
+                    }
                 }
             }
         </tbody>
     </table>
+
+    @if (!isAdmin)
+    {
+        <a class="btn btn-primary" asp-controller="Order" asp-action="Checkout">Checkout</a>
+    }
 }

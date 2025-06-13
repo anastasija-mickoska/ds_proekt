@@ -68,7 +68,7 @@ namespace ds_proekt.Services
             return snapshot.Documents.Select(d => d.ConvertTo<Order>()).ToList();
         }
 
-        public async Task<Order> GetOrderByUserIdAsync(int userId)
+        public async Task<Order> GetOrderByUserIdAsync(string userId)
         {
             QuerySnapshot snapshot = await _firestoreDb.Collection("Orders").WhereEqualTo("UserId", userId).WhereEqualTo("OrderDate", null).Limit(1).GetSnapshotAsync();
             return snapshot.Documents.FirstOrDefault()?.ConvertTo<Order>();

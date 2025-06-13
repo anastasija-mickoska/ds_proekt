@@ -22,21 +22,31 @@ namespace ds_proekt.Controllers
 
             if (string.IsNullOrEmpty(userId))
             {
-                return Unauthorized();
-            }
-
-            if (role == "admin")
-            {
-                return View(allOrders);
+                return RedirectToAction("Login", "User");
             }
             else
             {
-                var userOrder = allOrders.FirstOrDefault(o => o.UserId == userId && o.OrderDate == null);
-
-                return View(userOrder);
+                if (role == "admin")
+                {
+                    ViewData["UserRole"] = role;
+                    return View(allOrders);
+                }
+                else
+                {
+                    var userOrder = allOrders.FirstOrDefault(o => o.UserId == userId && o.OrderDate == null);
+                    ViewData["UserRole"] = role;
+                    return View(userOrder);
+                }
             }
         }
 
+        [HttpGet]
+        public IActionResult Checkout()
+        {
+            return View(); 
+        }
+
+        [HttpPost]
         public async Task<ActionResult> AddOrder(Order order)
         {
             string userId = HttpContext.Session.GetString("UserId");
@@ -48,6 +58,9 @@ namespace ds_proekt.Controllers
 
             order.UserId = userId;
             order.OrderDate = DateTime.UtcNow;
+            var userOrder = await _firestoreService.GetOrderByUserIdAsync(userId);
+            order.Items = userOrder.Items;
+            order.TotalPrice = userOrder.Items.Sum(i => i.Quantity * i.Price); 
 
             await _firestoreService.AddOrderAsync(order);
 

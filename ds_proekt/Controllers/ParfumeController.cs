@@ -24,6 +24,13 @@ namespace ds_proekt.Controllers
         }
         public async Task<ActionResult> AddToCart(string id)
         {
+            string userId = HttpContext.Session.GetString("UserId");
+
+            if (string.IsNullOrEmpty(userId))
+            {
+                return RedirectToAction("Login","User");
+            }
+
             var parfume = await _firestoreService.GetParfumeByIdAsync(id);
 
             if (parfume == null)
@@ -33,17 +40,53 @@ namespace ds_proekt.Controllers
 
             var cartItem = new CartItem
             {
+                UserId = userId,
                 ParfumeId = parfume.ParfumeId,
                 ParfumeName = parfume.Name,
                 Quantity = 1,
                 Price = parfume.Price
-
             };
 
-            await _firestoreService.AddToCartAsync(cartItem);
-            return RedirectToAction("Index", "Order");
+            var orders = await _firestoreService.GetOrdersAsync();
+            var currentOrder = orders.FirstOrDefault(o => o.UserId == userId && o.OrderDate == null);
+
+            if (currentOrder == null)
+            {
+                var newOrder = new Order
+                {
+                    Id = Guid.NewGuid().ToString(),
+                    UserId = userId,
+                    OrderDate = null,
+                    Items = new List<CartItem> { cartItem },
+                    TotalPrice = cartItem.Price
+                };
+                await _firestoreService.AddOrderAsync(newOrder);
+            }
+            else
+            {
+                var existingItem = currentOrder.Items.FirstOrDefault(i => i.ParfumeId == parfume.ParfumeId);
+                if (existingItem != null)
+                {
+                    existingItem.Quantity += 1;
+                }
+                else
+                {
+                    currentOrder.Items.Add(cartItem);
+                }
+                currentOrder.TotalPrice = currentOrder.Items.Sum(i => i.Price * i.Quantity);
+
+                await _firestoreService.UpdateOrderAsync(currentOrder); 
+            }
+            return RedirectToAction("Index", "Order"); 
         }
 
+        [HttpGet]
+        public async Task<IActionResult> Create()
+        {
+            return View();
+        }
+
+        [HttpPost]
         public async Task<ActionResult> Create(Parfume parfume)
         {
             if (ModelState.IsValid)
@@ -67,6 +110,8 @@ namespace ds_proekt.Controllers
 
             return View(parfumes);
         }
+
+        [HttpGet]
         public async Task<ActionResult> Details(string id)
         {
             var parfume = await _firestoreService.GetParfumeByIdAsync(id);

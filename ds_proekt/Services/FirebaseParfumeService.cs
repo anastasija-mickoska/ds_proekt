@@ -61,6 +61,15 @@ namespace ds_proekt.Services
         {
             await _firestoreDb.Collection("Orders").AddAsync(order);
         }
+        public async Task UpdateOrderAsync(Order order)
+        {
+            if (string.IsNullOrEmpty(order.Id))
+                throw new ArgumentException("Order ID must not be null or empty.");
+
+            DocumentReference docRef = _firestoreDb.Collection("Orders").Document(order.Id);
+
+            await docRef.SetAsync(order);
+        }
 
         public async Task<List<Order>> GetOrdersAsync()
         {

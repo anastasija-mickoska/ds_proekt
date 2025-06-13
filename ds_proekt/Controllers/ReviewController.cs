@@ -44,7 +44,6 @@ namespace ds_proekt.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromHeader(Name = "Authorization")] string idToken, [FromBody] Review review)
         {
-            
 
             if (string.IsNullOrEmpty(idToken)) return Unauthorized("Missing token");
 

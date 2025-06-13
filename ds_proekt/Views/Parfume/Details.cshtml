@@ -2,14 +2,17 @@
 
 @{
     ViewData["Title"] = "Perfume Details";
+    var role = Context.Session.GetString("UserRole");
 }
 
 <h2>@Model.Parfume.Name</h2>
 
 <p><strong>Brand:</strong> @Model.Parfume.Brand</p>
 <p><strong>Price:</strong> @Model.Parfume.Price.ToString("C")</p>
-
-<a class="btn btn-success" asp-action="AddToCart" asp-route-id="@Model.Parfume.ParfumeId">Add to Cart</a>
+@if(role == "user")
+{
+    <a class="btn btn-success" asp-action="AddToCart" asp-route-id="@Model.Parfume.ParfumeId">Add to Cart</a>
+}
 
 <hr />
 

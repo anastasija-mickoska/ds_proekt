@@ -4,34 +4,54 @@
     ViewData["Title"] = "Perfume Details";
     var role = Context.Session.GetString("UserRole");
 }
+<link rel="stylesheet" href="~/css/perfume.css" />
+<div class="container mt-4 details-container">
+    <div class="card shadow-sm" style="background-color: #D1C7BD;">
+        <div class="card-body card-body-details">
+            <div class="left">
+                <h3 class="card-title">@Model.Parfume.Name</h3>
 
-<h2>@Model.Parfume.Name</h2>
+                <p class="card-text">
+                    <strong>Brand:</strong> @Model.Parfume.Brand<br />
+                    <strong>Price:</strong> @Model.Parfume.Price.ToString("C")
+                </p>
 
-<p><strong>Brand:</strong> @Model.Parfume.Brand</p>
-<p><strong>Price:</strong> @Model.Parfume.Price.ToString("C")</p>
-@if(role == "user")
-{
-    <a class="btn btn-success" asp-action="AddToCart" asp-route-id="@Model.Parfume.ParfumeId">Add to Cart</a>
-}
+                @if (role == "user")
+                {
+                    <a class="btn btn-success" asp-action="AddToCart" asp-route-id="@Model.Parfume.ParfumeId">Add to Cart</a>
+                }
+            </div>
+            <div class="right">
+                <img src="@Model.Parfume.ImageUrl" class="card-img-top" alt="@Model.Parfume.Name" style="height: 300px; " />
+            </div>
+            
+        </div>
+    </div>
 
-<hr />
-
-<h4>Reviews</h4>
-
-@if (Model.Reviews != null && Model.Reviews.Any())
-{
-    <ul class="list-group">
-        @foreach (var review in Model.Reviews)
-        {
-            <li class="list-group-item">
-                <strong>@review.UserId:</strong> @review.Comment
-                <span class="float-end">Rating: @review.Rating/10</span>
-            </li>
-        }
-    </ul>
-}
-else
-{
-    <p>No reviews yet.</p>
-}
-
+    <div class="card mt-4 shadow-sm">
+        <div class="card-header bg-light" >
+            <h4 class="mb-0">Reviews</h4>
+        </div>
+        <div class="card-body">
+            @if (Model.Reviews != null && Model.Reviews.Any())
+            {
+                <ul class="list-group">
+                    @foreach (var reviewEntry in Model.Reviews)
+                    {
+                        <li class="list-group-item">
+                            <strong>@reviewEntry.UserEmail:</strong> @reviewEntry.Review.Comment
+                             
+                            <storng> <span class="float-end"> Rating: @reviewEntry.Review.Rating/10</span></storng>
+                        </li>
+                    }
+                </ul>
+            }
+            else
+            {
+                <p>No reviews yet.</p>
+            }
+        </div>
+    </div>
+    <br />
+    <a class="btn btn-success" asp-action="Index">Previous</a>
+</div>

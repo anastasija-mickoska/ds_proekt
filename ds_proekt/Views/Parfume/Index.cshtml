@@ -4,8 +4,7 @@
     ViewData["Title"] = "Perfume Catalog";
 }
 
-
-
+<link rel="stylesheet" href="~/css/perfume.css" />
 <h2>Perfume Catalog</h2>
 
 @{
@@ -34,10 +33,10 @@ else
         @foreach (var parfume in Model)
         {
             <div class="col">
-                <div class="card h-100 shadow-sm">
+                <div class="card custom-card shadow-sm">
                     @if (!string.IsNullOrEmpty(parfume.ImageUrl))
                     {
-                        <img src="@parfume.ImageUrl" class="card-img-top" alt="@parfume.Name" style="height: 200px; object-fit: cover;" />
+                        <img src="@parfume.ImageUrl" class="card-img-top" alt="@parfume.Name" style="height: 300px; " />
                     }
                     <div class="card-body">
                         <h5 class="card-title">@parfume.Name</h5>

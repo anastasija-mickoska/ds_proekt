@@ -135,14 +135,27 @@ namespace ds_proekt.Controllers
 
             var reviews = await _firestoreService.GetReviewsByProductAsync(id);
 
+            var enrichedReviews = new List<ReviewWithEmail>();
+
+            foreach (var review in reviews)
+            {
+                var user = await _firestoreService.GetUserByIdAsync(review.UserId);
+                enrichedReviews.Add(new ReviewWithEmail
+                {
+                    Review = review,
+                    UserEmail = user?.Email ?? "Unknown"
+                });
+            }
+
             var viewModel = new ParfumeDetailsViewModel
             {
                 Parfume = parfume,
-                Reviews = reviews
+                Reviews = enrichedReviews
             };
 
             return View(viewModel);
         }
+
 
     }
 }

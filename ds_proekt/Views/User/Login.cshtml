@@ -3,27 +3,34 @@
 @{
     ViewData["Title"] = "Login";
 }
+<link rel="stylesheet" href="~/css/perfume.css" />
 
-<h2>Login</h2>
+<div class="create-container" style="width:800px; margin-top:100px;margin-left:280px;">
+    <h2>Login</h2>
 
-<form asp-action="Login" method="post" class="form-signin">
-    <div class="form-group">
-        <label asp-for="Email">Email</label>
-        <input asp-for="Email" class="form-control" type="email" placeholder="Enter email" required />
-        <span asp-validation-for="Email" class="text-danger"></span>
-    </div>
+    <form asp-action="Login" method="post" class="form-signin">
+        <div class="form-group">
+            <label asp-for="Email">Email</label>
+            <input asp-for="Email" class="form-control" type="email" placeholder="Enter email" required />
+            <span asp-validation-for="Email" class="text-danger"></span>
+        </div>
 
-    <div class="form-group">
-        <label asp-for="Password">Password</label>
-        <input asp-for="Password" class="form-control" type="password" placeholder="Enter password" required />
-        <span asp-validation-for="Password" class="text-danger"></span>
-    </div>
+        <div class="form-group" style="margin-top:10px;">
+            <label asp-for="Password">Password</label>
+            <input asp-for="Password" class="form-control" type="password" placeholder="Enter password" required />
+            <span asp-validation-for="Password" class="text-danger"></span>
+        </div>
 
-    <button type="submit" class="btn btn-primary mt-3">Login</button>
-</form>
-<p class="nav-item">
-    <a class="nav-link text-dark" asp-area="" asp-controller="User" asp-action="Register">Not signed in? Register now</a>
-</p>
+        <button type="submit" class="btn btn-primary mt-3">Login</button>
+        
+       
+    </form>
+    <a class="btn btn-outline-primary" style="margin-top:10px;" asp-area="" asp-controller="User" asp-action="Register">Not signed in? Register now</a>
+    
+       
+    
+
+</div>
 
 @section Scripts {
     @{

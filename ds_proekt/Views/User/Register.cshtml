@@ -3,7 +3,8 @@
 @{
     ViewData["Title"] = "Register";
 }
-
+<link rel="stylesheet" href="~/css/perfume.css" />
+<div class="create-container" style="width:800px; margin-top:100px;margin-left:280px;">
 <h2>Register</h2>
 
 <form asp-action="Register" method="post" class="form-signin">
@@ -30,7 +31,7 @@
 
     <button type="submit" class="btn btn-primary mt-3">Register</button>
 </form>
-
+</div>
 @section Scripts {
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");

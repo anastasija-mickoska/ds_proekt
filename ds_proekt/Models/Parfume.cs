@@ -6,19 +6,18 @@ namespace ds_proekt.Models;
 public class Parfume
 {
     [FirestoreProperty]
-    public string ParfumeId { get; set; }
+    public string? ParfumeId { get; set; }
         [Required]
     [FirestoreProperty]
     public string Name { get; set; }
     [FirestoreProperty]
     [Required]
-        public decimal Price { get; set; }
+        public double Price { get; set; }
     [FirestoreProperty]
     public string? ImageUrl { get; set; }
     [FirestoreProperty]
-    public int BrandId { get; set; }
-    [FirestoreProperty]
-    public Brand Brand { get; set; }
+    public string Brand { get; set; }
+    
     [FirestoreProperty]
     public ICollection<Review>? Reviews { get; set; }
 

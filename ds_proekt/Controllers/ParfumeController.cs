@@ -83,19 +83,27 @@ namespace ds_proekt.Controllers
         [HttpGet]
         public async Task<IActionResult> Create()
         {
-            ViewBag.Brands = new SelectList(await _firestoreService.GetBrandsAsync(), "BrandId", "Name");
+           
             return View();
         }
 
         [HttpPost]
-        public async Task<ActionResult> Create(Parfume parfume)
+        public async Task<IActionResult> Create(Parfume parfume)
         {
-            if (ModelState.IsValid)
+            foreach (var entry in ModelState)
             {
-                await _firestoreService.AddParfumeAsync(parfume);
-                return RedirectToAction("Index");
+               foreach (var error in entry.Value.Errors)
+               {
+                   System.Diagnostics.Debug.WriteLine($"Key: {entry.Key}, Error: {error.ErrorMessage}");
+                }
             }
-            return View(parfume);
+            if (!ModelState.IsValid)
+            {
+                return View(parfume);
+            }
+
+            await _firestoreService.AddParfumeAsync(parfume); // this will assign ParfumeId
+            return RedirectToAction("Index");
         }
 
         public async Task<ActionResult> Index(string searchString)

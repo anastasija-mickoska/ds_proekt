@@ -12,7 +12,7 @@ namespace ds_proekt.Models
         [FirestoreProperty]
         public DateTime? OrderDate { get; set; }
         [FirestoreProperty]
-        public double TotalPrice { get; set; }
+        public decimal TotalPrice { get; set; }
         [FirestoreProperty]
         public List<CartItem> Items { get; set; }
         [FirestoreProperty]

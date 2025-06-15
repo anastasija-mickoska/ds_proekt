@@ -1,7 +1,6 @@
 using ds_proekt.Services;
 using FirebaseAdmin;
 using Google.Apis.Auth.OAuth2;
-using Google.Cloud.Firestore;
 using Microsoft.AspNetCore.Builder.Extensions;
 
 var pathToKey = Path.Combine(Directory.GetCurrentDirectory(), "ds-proekt-baa0c-firebase-adminsdk-fbsvc-a3c65714d0.json");
@@ -29,12 +28,7 @@ builder.Services.AddSession(options =>
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
 });
-builder.Services.AddSingleton(provider =>
-{
-    string projectId = "ds-proekt-baa0c";
-    FirestoreDb db = FirestoreDb.Create(projectId);
-    return db;
-});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

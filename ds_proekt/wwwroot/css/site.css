@@ -2,6 +2,31 @@ html {
   font-size: 14px;
 }
 
+@font-face {
+    font-family: 'Montserrat';
+    src: url('../fonts/Montserrat-Regular.ttf') format('truetype');
+    font-weight: 300;
+    font-style:normal;
+}
+@font-face {
+    font-family: 'Montserrat';
+    src: url('../fonts/Montserrat-SemiBold.ttf') format('truetype');
+    font-weight: 500;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'Raleway';
+    src: url('../fonts/Raleway-Regular.ttf') format('truetype');
+    font-weight: 300;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'Raleway';
+    src: url('../fonts/Raleway-SemiBold.ttf') format('truetype');
+    font-weight: 500;
+    font-style: normal;
+}
+
 @media (min-width: 768px) {
   html {
     font-size: 16px;
@@ -19,4 +44,12 @@ html {
 
 body {
   margin-bottom: 60px;
+  background-color:#F1EDE6;
+  font-family:'Raleway';
+}
+.nav-item {
+    width:10%;
+    letter-spacing:2px;
+    text-align:center;
+    font-size:1rem;
 }

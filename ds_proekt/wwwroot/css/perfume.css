@@ -1,0 +1,70 @@
+﻿
+.custom-card {
+    background-color: #D1C7BD;
+    height: 500px;
+    border: 1px solid #ccc;
+    border-radius: 15px;
+    padding:10px;
+}
+
+.btn-primary {
+    background-color: #3A2D2B;
+    border-color: #3A2D2B;
+    color: white;
+}
+
+    .btn-primary:hover {
+        background-color: #CBAD8D;
+        border-color: #CBAD8D;
+    }
+
+
+.btn-success {
+    background-color: #3A2D2B;
+    border-color: #3A2D2B;
+    color: white;
+}
+
+    .btn-success:hover {
+        background-color: #CBAD8D;
+        border-color: #CBAD8D;
+    }
+
+
+.btn-outline-primary {
+    color: #3A2D2B;
+    border-color: #3A2D2B;
+}
+
+    .btn-outline-primary:hover {
+        background-color: #CBAD8D;
+        color: white;
+        border-color: #CBAD8D;
+    }
+.card-body-details {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+}
+.details-container{
+    width:800px;
+}
+.left {
+    flex: 1;
+    margin-left:70px;
+}
+
+.right {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+    .right img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 10px;
+    }
+

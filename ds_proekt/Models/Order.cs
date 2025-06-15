@@ -6,7 +6,7 @@ namespace ds_proekt.Models
     public class Order
     {
         [FirestoreProperty]
-        public string Id { get; set; }
+        public string? Id { get; set; }
         [FirestoreProperty]
         public string UserId { get; set; }
         [FirestoreProperty]

@@ -15,12 +15,13 @@
         <form asp-action="Create" method="post">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="ParfumeId" class="control-label"></label>
-                @Html.DropDownList("ParfumeId", ViewData["ParfumeId"] as List<SelectListItem>, "Select a parfume", new { @class = "form-control" })
+                <label asp-for="ParfumeId"></label>
+                @Html.DropDownListFor(model => model.ParfumeId, ViewBag.ParfumeId as SelectList, "Select a perfume", new { @class = "form-control" })
+                <span asp-validation-for="ParfumeId" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="UserId" class="control-label"></label>
-                <input asp-for="UserId" class="form-control" value="@email" readonly></input>
+                <input asp-for="UserId" class="form-control" value=@email readonly/>
                 <input asp-for="UserId" type="hidden" />
             </div>
             <div class="form-group">
@@ -33,9 +34,7 @@
                 <input asp-for="Rating" class="form-control-range" type="range" min="1" max="10" step="1" oninput="updateSliderValue(this.value)" />
                 <output style="font-size:1.5em" id="rating-value">5</output> 
             </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="add" />
-            </div>
+            <button type="submit" class="btn btn-primary">Add</button>
             <button class="add">
                 <a asp-action="Index">Back to List</a>
             </button>

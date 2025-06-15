@@ -17,20 +17,14 @@ namespace ds_proekt.Services
         {
             var collection = _firestoreDb.Collection("Parfumes");
 
-            // Add the document without specifying ID
             DocumentReference docRef = await collection.AddAsync(parfume);
-
-            // Assign the generated document ID back to parfume
             parfume.ParfumeId = docRef.Id;
-
-            // Optionally: update the same document to include the ID if needed inside the document data
             Dictionary<string, object> update = new Dictionary<string, object>
-    {
-        { "ParfumeId", parfume.ParfumeId }
-    };
+            {
+                { "ParfumeId", parfume.ParfumeId }
+            };
             await docRef.UpdateAsync(update);
         }
-
         public async Task<List<Parfume>> GetParfumesAsync()
         {
             QuerySnapshot snapshot = await _firestoreDb.Collection("Parfumes").GetSnapshotAsync();

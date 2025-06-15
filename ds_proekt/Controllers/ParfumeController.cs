@@ -110,10 +110,12 @@ namespace ds_proekt.Controllers
         {
             var parfumes = await _firestoreService.GetParfumesAsync();
 
-            if (!String.IsNullOrEmpty(searchString))
+            if (!string.IsNullOrEmpty(searchString))
             {
                 parfumes = parfumes
-                    .Where(p => p.Name.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+                    .Where(p =>
+                        (p.Name.Contains(searchString, StringComparison.OrdinalIgnoreCase)) ||
+                        (p.Brand.Contains(searchString, StringComparison.OrdinalIgnoreCase)))
                     .ToList();
             }
 

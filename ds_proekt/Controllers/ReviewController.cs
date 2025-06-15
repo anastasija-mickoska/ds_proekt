@@ -42,36 +42,43 @@ namespace ds_proekt.Controllers
 
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromHeader(Name = "Authorization")] string idToken, [FromBody] Review review)
+        public async Task<IActionResult> Create(Review review)
         {
+            foreach (var entry in ModelState)
+            {
+                foreach (var error in entry.Value.Errors)
+                {
+                    System.Diagnostics.Debug.WriteLine($"Key: {entry.Key}, Error: {error.ErrorMessage}");
+                }
+            }
 
-            if (string.IsNullOrEmpty(idToken)) return Unauthorized("Missing token");
+            if (!ModelState.IsValid)
+            {
+                var parfumes = await _firestoreService.GetParfumesAsync();
+                ViewBag.ParfumeId = new SelectList(parfumes, "ParfumeId", "Name");
+                return View(review); 
+            }
+            string userId = HttpContext.Session.GetString("UserId");
 
-            var decodedToken = await _authService.VerifyIdTokenAsync(idToken.Replace("Bearer ", ""));
-            if (decodedToken == null) return Unauthorized("Invalid token");
+            if (string.IsNullOrEmpty(userId))
+            {
+                return RedirectToAction("Login", "User");
+            }
 
-            string uid = decodedToken.Uid;
-
-            review.UserId = uid;
+            review.UserId = userId;
 
             await _firestoreService.AddReviewAsync(review);
-            return Ok("Review submitted");
+
+            return RedirectToAction("Index");
         }
 
         [HttpGet]
-        public async Task<IActionResult > Create()
-
+        public async Task<IActionResult> Create()
         {
-            var products = await _firestoreService.GetParfumesAsync();
-
-            var selectList = products.Select(p => new SelectListItem
-            {
-                Value = p.ParfumeId,
-                Text = p.Name
-            }).ToList();
-
-            ViewData["ParfumeId"] = selectList;
+            var parfumes = await _firestoreService.GetParfumesAsync();
+            ViewBag.ParfumeId = new SelectList(parfumes, "ParfumeId", "Name");
             return View();
         }
+
     }
 }

@@ -1,8 +1,9 @@
 ﻿using ds_proekt.Models;
 using ds_proekt.Services;
-using Microsoft.AspNetCore.Mvc;
-using FirebaseAdmin;
+using ds_proekt.ViewModels;
 using Firebase;
+using FirebaseAdmin;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace ds_proekt.Controllers
@@ -21,7 +22,9 @@ namespace ds_proekt.Controllers
         public async Task<ActionResult> Index(string searchString)
         {
             var allParfumes = await _firestoreService.GetParfumesAsync();
+            var allReviews = await _firestoreService.GetReviewsAsync();
 
+            // Filter perfumes based on search string
             var matchingParfumeIds = string.IsNullOrWhiteSpace(searchString)
                 ? allParfumes.Select(p => p.ParfumeId).ToList()
                 : allParfumes
@@ -29,15 +32,31 @@ namespace ds_proekt.Controllers
                     .Select(p => p.ParfumeId)
                     .ToList();
 
-            var allReviews = await _firestoreService.GetReviewsAsync();
-
             var filteredReviews = allReviews
                 .Where(r => matchingParfumeIds.Contains(r.ParfumeId))
                 .ToList();
 
-            ViewBag.SearchString = searchString;
+            var reviewDisplayList = new List<ReviewDisplayViewModel>();
 
-            return View(filteredReviews);
+            foreach (var review in filteredReviews)
+            {
+                var parfume = allParfumes.FirstOrDefault(p => p.ParfumeId == review.ParfumeId);
+                var user = await _firestoreService.GetUserByIdAsync(review.UserId);
+
+                var displayReview = new ReviewDisplayViewModel
+                {
+                    ReviewId = review.ReviewId,
+                    ParfumeName = parfume?.Name ?? "Unknown Parfume",
+                    UserEmail = user?.Email ?? "Unknown User",
+                    Comment = review.Comment,
+                    Rating = review.Rating
+                };
+
+                reviewDisplayList.Add(displayReview);
+            }
+
+            ViewBag.SearchString = searchString;
+            return View(reviewDisplayList);
         }
 
 

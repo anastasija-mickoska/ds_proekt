@@ -1,72 +1,87 @@
 ﻿@using ds_proekt.Models
-@model object
+@using ds_proekt.ViewModels
+@model List<OrderDisplayViewModel>
 
 @{
     ViewData["Title"] = "Orders";
-
     bool isAdmin = ViewData["UserRole"]?.ToString() == "admin";
-
-    List<Order> orderList = new();
-
-    if (isAdmin && Model is List<Order> adminOrders)
-    {
-        orderList = adminOrders;
-    }
-    else if (!isAdmin && Model is Order userOrder && userOrder != null)
-    {
-        orderList.Add(userOrder);
-    }
 }
 
-@if(isAdmin)
+@if (isAdmin)
 {
-    <h2>Orders</h2>
-}
-else {
-    <h2>Cart</h2>
-}
-
-
-@if (!orderList.Any())
-{
-    <p>No items found.</p>
+    <h2>All Orders</h2>
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info">No orders found.</div>
+    }
+    else
+    {
+        <table class="table table-striped table-bordered">
+            <thead class="table-dark">
+                <tr>
+                    <th>Order ID</th>
+                    <th>User Email</th>
+                    <th>Parfume Name</th>
+                    <th>Quantity</th>
+                    <th>Price</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var order in Model)
+                {
+                    @* foreach (var item in order.Items)
+                    { *@
+                        <tr>
+                            <td>@order.OrderId</td>
+                            <td>@order.UserEmail</td>
+                            @* <td>@item.ParfumeName</td>
+                            <td>@item.Quantity</td>
+                            <td>@item.Price</td> *@
+                            <td>@(order.OrderDate?.ToString("g") ?? "In Progress")</td>
+                        </tr>
+                    @* } *@
+                    <tr>
+                        <td colspan="6"><strong>Total Price: @order.TotalPrice</strong></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
 }
 else
 {
-    <table class="table table-striped table-bordered">
-        <thead class="table-dark">
-            <tr>
-                <th>Order ID</th>
-                <th>User ID</th>
-                <th>Parfume ID</th>
-                <th>Quantity</th>
-                <th>Total Price</th>
-                <th>Date</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var order in orderList)
-            {
-                if (order.Items != null)
-                {
-                    foreach (var item in order.Items)
-                    {
-                        <tr>
-                            <td>@order.Id</td>
-                            <td>@order.UserId</td>
-                            <td>@item.ParfumeId</td>
-                            <td>@item.Quantity</td>
-                            <td>@order.TotalPrice.ToString("C")</td>
-                            <td>@(order.OrderDate?.ToString("g") ?? "In Progress")</td>
-                        </tr>
-                    }
-                }
-            }
-        </tbody>
-    </table>
+    <h2>Cart</h2>
+    var userOrder = Model.FirstOrDefault();
 
-    @if (!isAdmin)
+    if (userOrder == null || userOrder.Items == null || !userOrder.Items.Any())
     {
+        <div class="alert alert-info">Your cart is empty.</div>
+    }
+    else
+    {
+        <table class="table table-striped table-bordered">
+            <thead class="table-dark">
+                <tr>
+                    <th>Parfume Name</th>
+                    <th>Quantity</th>
+                    <th>Price</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in userOrder.Items)
+                {
+                    <tr>
+                        <td>@item.ParfumeName</td>
+                        <td>@item.Quantity</td>
+                        <td>@item.Price</td>
+                    </tr>
+                }
+                <tr>
+                    <td colspan="3"><strong>Total Price: @userOrder.TotalPrice</strong></td>
+                </tr>
+            </tbody>
+        </table>
         <a class="btn btn-primary" asp-controller="Order" asp-action="Checkout">Checkout</a>
     }
 }

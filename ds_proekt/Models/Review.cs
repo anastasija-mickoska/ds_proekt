@@ -16,6 +16,6 @@ namespace ds_proekt.Models
         [StringLength(500)]
         public string Comment { get; set; }
         [FirestoreProperty]
-        public int? Rating { get; set; }
+        public int Rating { get; set; }
     }
 }

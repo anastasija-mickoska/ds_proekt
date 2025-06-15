@@ -1,5 +1,4 @@
-﻿@model List<Review>
-
+﻿@model List<ds_proekt.ViewModels.ReviewDisplayViewModel>
 @{
     ViewData["Title"] = "Reviews";
     var searchString = ViewBag.SearchString as string;
@@ -25,29 +24,31 @@
 @if (Model != null && Model.Any())
 {
     <table class="table table-bordered table-striped">
-        <thead>
-            <tr>
-                <th>Parfume</th>
-                <th>User</th>
-                <th>Comment</th>
-                <th>Rating</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var review in Model)
-            {
+            <thead>
                 <tr>
-                    <td>@review.ParfumeId</td>
-                    <td>@review.UserId</td>
-                    <td>@review.Comment</td>
-                    <td>@review.Rating</td>
+                    <th>Perfume</th>
+                    <th>User</th>
+                    <th>Rating</th>
+                    <th>Content</th>
                 </tr>
-            }
-        </tbody>
+            </thead>
+            <tbody>
+                @foreach (var review in Model)
+                {
+                    <tr>
+                        <td>@review.ParfumeName</td>
+                        <td>@review.UserEmail</td>
+                        <td>@review.Rating</td>
+                        <td>@review.Comment</td>
+                    </tr>
+                }
+            </tbody>
     </table>
 }
 else
 {
-    <p>No reviews found.</p>
+    <div class="alert alert-info">
+        No reviews found.
+    </div>
 }
 

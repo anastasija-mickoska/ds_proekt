@@ -1,14 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using ds_proekt.Models;
+using ds_proekt.Services;
+using ds_proekt.ViewModels;
+using Firebase;
+using FirebaseAdmin;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using ds_proekt.Models;
-using FirebaseAdmin;
-using Firebase;
-using ds_proekt.Services;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace ds_proekt.Controllers
 {
@@ -27,16 +28,10 @@ namespace ds_proekt.Controllers
             string userId = HttpContext.Session.GetString("UserId");
 
             if (string.IsNullOrEmpty(userId))
-            {
-                return RedirectToAction("Login","User");
-            }
+                return RedirectToAction("Login", "User");
 
             var parfume = await _firestoreService.GetParfumeByIdAsync(id);
-
-            if (parfume == null)
-            {
-                return NotFound();
-            }
+            if (parfume == null) return NotFound();
 
             var cartItem = new CartItem
             {
@@ -47,8 +42,7 @@ namespace ds_proekt.Controllers
                 Price = parfume.Price
             };
 
-            var orders = await _firestoreService.GetOrdersAsync();
-            var currentOrder = orders.FirstOrDefault(o => o.UserId == userId && o.OrderDate == null);
+            var currentOrder = await _firestoreService.GetOrderByUserIdAsync(userId);
 
             if (currentOrder == null)
             {
@@ -57,9 +51,11 @@ namespace ds_proekt.Controllers
                     Id = Guid.NewGuid().ToString(),
                     UserId = userId,
                     OrderDate = null,
+                    IsActive = true, 
                     Items = new List<CartItem> { cartItem },
                     TotalPrice = cartItem.Price
                 };
+
                 await _firestoreService.AddOrderAsync(newOrder);
             }
             else
@@ -73,12 +69,18 @@ namespace ds_proekt.Controllers
                 {
                     currentOrder.Items.Add(cartItem);
                 }
+
                 currentOrder.TotalPrice = currentOrder.Items.Sum(i => i.Price * i.Quantity);
 
-                await _firestoreService.UpdateOrderAsync(currentOrder); 
+                await _firestoreService.UpdateOrderAsync(currentOrder);
             }
-            return RedirectToAction("Index", "Order"); 
+
+            return RedirectToAction("Index", "Order");
         }
+
+
+
+
 
         [HttpGet]
         public async Task<IActionResult> Create()
@@ -102,10 +104,9 @@ namespace ds_proekt.Controllers
                 return View(parfume);
             }
 
-            await _firestoreService.AddParfumeAsync(parfume); // this will assign ParfumeId
+            await _firestoreService.AddParfumeAsync(parfume); 
             return RedirectToAction("Index");
         }
-
         public async Task<ActionResult> Index(string searchString)
         {
             var parfumes = await _firestoreService.GetParfumesAsync();
@@ -145,3 +146,4 @@ namespace ds_proekt.Controllers
 
     }
 }
+

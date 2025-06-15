@@ -21,5 +21,8 @@ namespace ds_proekt.Models
         public string? Address { get; set; }
         [FirestoreProperty]
         public string? PhoneNumber { get; set; }
+
+        [FirestoreProperty]
+        public Boolean? IsActive { get; set; }
     }
 }

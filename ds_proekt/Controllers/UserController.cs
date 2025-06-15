@@ -24,8 +24,17 @@ namespace ds_proekt.Controllers
         [HttpPost]
         public async Task<IActionResult> Register(User user)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
+            {
+                //foreach (var entry in ModelState)
+                //{
+                //    foreach (var error in entry.Value.Errors)
+                //    {
+                //        System.Diagnostics.Debug.WriteLine($"Key: {entry.Key}, Error: {error.ErrorMessage}");
+                //    }
+                //}
                 return View(user);
+            }
 
             try
             {

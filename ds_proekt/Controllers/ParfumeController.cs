@@ -83,6 +83,7 @@ namespace ds_proekt.Controllers
         [HttpGet]
         public async Task<IActionResult> Create()
         {
+            ViewBag.Brands = new SelectList(await _firestoreService.GetBrandsAsync(), "BrandId", "Name");
             return View();
         }
 

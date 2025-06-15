@@ -12,9 +12,10 @@
         <input asp-for="Name" class="form-control" required/>
     </div>
     <div class="form-group">
-        <label asp-for="Brand"></label>
-        <select asp-for="Brand" asp-items="ViewBag.Brands" class="form-control"></select>
+        <label asp-for="Brand" class="control-label"></label>
+        <input asp-for="Brand" class="form-control" required />
     </div>
+
     <div class="form-group">
         <label asp-for="Price"></label>
         <input asp-for="Price" class="form-control" type="number" step="0.01" required />

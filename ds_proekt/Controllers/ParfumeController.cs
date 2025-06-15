@@ -9,6 +9,9 @@ using ds_proekt.Models;
 using FirebaseAdmin;
 using Firebase;
 using ds_proekt.Services;
+using Google.Cloud.Firestore.V1;
+using Google.Cloud.Firestore;
+
 
 namespace ds_proekt.Controllers
 {
@@ -16,11 +19,13 @@ namespace ds_proekt.Controllers
     {
         private readonly FirebaseAuthService _authService;
         private readonly FirebaseParfumeService _firestoreService;
+        private readonly FirestoreDb _firestoreDb;
 
-        public ParfumeController(FirebaseAuthService authService, FirebaseParfumeService firestoreService)
+        public ParfumeController(FirebaseAuthService authService, FirebaseParfumeService firestoreService, FirestoreDb firestoreDb)
         {
             _authService = authService;
             _firestoreService = firestoreService;
+            _firestoreDb = firestoreDb;
         }
         public async Task<ActionResult> AddToCart(string id)
         {
@@ -83,20 +88,33 @@ namespace ds_proekt.Controllers
         [HttpGet]
         public async Task<IActionResult> Create()
         {
-            ViewBag.Brands = new SelectList(await _firestoreService.GetBrandsAsync(), "BrandId", "Name");
+
+            //ViewBag.Brands = new SelectList(await _firestoreService.GetBrandsAsync(), "BrandId", "Name");
             return View();
         }
-
         [HttpPost]
         public async Task<ActionResult> Create(Parfume parfume)
         {
-            if (ModelState.IsValid)
+            //ViewBag.Brands = new SelectList(await _firestoreService.GetBrandsAsync(), "BrandId", "Name");
+            foreach (var entry in ModelState)
             {
-                await _firestoreService.AddParfumeAsync(parfume);
-                return RedirectToAction("Index");
+               foreach (var error in entry.Value.Errors)
+               {
+                   System.Diagnostics.Debug.WriteLine($"Key: {entry.Key}, Error: {error.ErrorMessage}");
+                }
             }
-            return View(parfume);
+            if (!ModelState.IsValid)
+            {
+                return View(parfume);
+            }
+
+            //parfume.ParfumeId = Guid.NewGuid().ToString();
+            //parfume.Brand = await _firestoreService.GetBrandByIdAsync(parfume.BrandId);
+            await _firestoreService.AddParfumeAsync(parfume);
+
+            return RedirectToAction("Index");
         }
+
 
         public async Task<ActionResult> Index(string searchString)
         {

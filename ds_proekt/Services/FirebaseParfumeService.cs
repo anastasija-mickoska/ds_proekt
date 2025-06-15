@@ -15,8 +15,20 @@ namespace ds_proekt.Services
 
         public async Task AddParfumeAsync(Parfume parfume)
         {
-            CollectionReference parfumesRef = _firestoreDb.Collection("Parfumes");
-            await parfumesRef.AddAsync(parfume);
+            var collection = _firestoreDb.Collection("Parfumes");
+
+            // Add the document without specifying ID
+            DocumentReference docRef = await collection.AddAsync(parfume);
+
+            // Assign the generated document ID back to parfume
+            parfume.ParfumeId = docRef.Id;
+
+            // Optionally: update the same document to include the ID if needed inside the document data
+            Dictionary<string, object> update = new Dictionary<string, object>
+    {
+        { "ParfumeId", parfume.ParfumeId }
+    };
+            await docRef.UpdateAsync(update);
         }
 
         public async Task<List<Parfume>> GetParfumesAsync()
@@ -31,16 +43,7 @@ namespace ds_proekt.Services
             DocumentSnapshot snapshot = await docRef.GetSnapshotAsync();
             return snapshot.Exists ? snapshot.ConvertTo<Parfume>() : null;
         }
-        public async Task AddBrandAsync(Brand brand)
-        {
-            await _firestoreDb.Collection("Brands").AddAsync(brand);
-        }
-
-        public async Task<List<Brand>> GetBrandsAsync()
-        {
-            QuerySnapshot snapshot = await _firestoreDb.Collection("Brands").GetSnapshotAsync();
-            return snapshot.Documents.Select(d => d.ConvertTo<Brand>()).ToList();
-        }
+        
         public async Task AddReviewAsync(Review review)
         {
             await _firestoreDb.Collection("Reviews").AddAsync(review);

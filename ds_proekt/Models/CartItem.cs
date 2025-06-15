@@ -16,6 +16,6 @@ namespace ds_proekt.Models
         [FirestoreProperty]
         public int Quantity { get; set; }
         [FirestoreProperty]
-        public decimal Price { get; set; }
+        public double Price { get; set; }
     }
 }

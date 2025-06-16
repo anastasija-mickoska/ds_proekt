@@ -8,7 +8,7 @@
 @{
     string email = Context.Session.GetString("UserEmail");
 }
-<div class="create-container">
+<link rel="stylesheet" href="~/css/perfume.css" />
 <h2>Add New Review</h2>
 
 <div class="row">
@@ -35,10 +35,8 @@
                     <input asp-for="Rating" class="form-control-range custom-range" type="range" min="1" max="10" step="1" oninput="updateSliderValue(this.value)" />
                 <output style="font-size:1.5em" id="rating-value">5</output> 
             </div>
-            <button type="submit" class="btn btn-primary">Add</button>
-            
-                    <a class="btn btn-outline-primary" asp-action="Index">Back to List</a>
-           
+            <button type="submit" class="btn btn-primary" id="addReview">Add</button>
+                <a class="btn btn-outline-primary" asp-action="Index">Back to List</a>
         </form>
     </div>
 </div>

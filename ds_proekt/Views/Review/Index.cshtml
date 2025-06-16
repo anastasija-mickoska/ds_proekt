@@ -7,6 +7,7 @@
 <link rel="stylesheet" href="~/css/review.css" />
 <h2 class="mb-4">Reviews</h2>
 
+<link rel="stylesheet" href="~/css/perfume.css" />
 @{
     string role = Context.Session.GetString("UserRole");
 }
@@ -32,6 +33,8 @@
     <div class="table-responsive">
         <table class="table table-hover shadow-sm border rounded bg-white">
             <thead class="text-center custom-thead">
+    <table class="table table-bordered table-striped table-hover">
+            <thead>
                 <tr>
                     <th>Perfume</th>
                     <th>User</th>

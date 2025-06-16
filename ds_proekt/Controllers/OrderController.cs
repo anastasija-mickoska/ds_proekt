@@ -122,7 +122,7 @@ namespace ds_proekt.Controllers
             order.IsActive = false;
             await _firestoreService.UpdateOrderAsync(order);
 
-            return RedirectToAction("CompleteOrder", new { id = order.Id });
+            return RedirectToAction("CompleteOrder","Order", new { id = order.Id });
         }
 
         public async Task<IActionResult> CompleteOrder(string orderId)

@@ -113,6 +113,10 @@ namespace ds_proekt.Controllers
             order.OrderDate = DateTime.UtcNow;
             var userOrder = await _firestoreService.GetOrderByUserIdAsync(userId);
             order.Id = userOrder.Id;
+            if (userOrder == null)
+            {
+                return BadRequest("No active order found for user.");
+            }
             order.Items = userOrder.Items;
             order.TotalPrice = userOrder.Items.Sum(i => i.Quantity * i.Price);
             order.IsActive = false;

@@ -1,47 +1,49 @@
 ﻿@using ds_proekt.Models
 @using ds_proekt.ViewModels
 @model List<OrderDisplayViewModel>
-<link rel="stylesheet" href="~/css/perfume.css" />
+<link rel="stylesheet" href="~/css/order.css" />
 @{
     ViewData["Title"] = "Orders";
     bool isAdmin = ViewData["UserRole"]?.ToString() == "admin";
 }
 @if (isAdmin)
 {
-    <h2>All Orders</h2>
+    <h2 class="mb-4 ">All Orders</h2>
     @if (!Model.Any())
     {
         <div class="alert alert-info">No orders found.</div>
     }
     else
     {
-        <table class="table table-striped table-bordered table-hover">
-            <thead>
-                <tr>
-                    <th>Order ID</th>
-                    <th>User Email</th>
-                    <th>Date</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var order in Model)
-                {
-                        <tr>
+        <div class="table-responsive">
+            <table class="table table-hover table-bordered rounded shadow-sm">
+                <thead style=" background-color: #D1C7BD;color:#3A2D2B ">
+                    <tr>
+                        <th scope="col">Order ID</th>
+                        <th scope="col">User Email</th>
+                        <th scope="col">Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var order in Model)
+                    {
+                        <tr class="align-middle">
                             <td>@order.OrderId</td>
                             <td>@order.UserEmail</td>
                             <td>@(order.OrderDate?.ToString("g") ?? "In Progress")</td>
                         </tr>
-                    <tr>
-                        <td colspan="6"><strong>Total Price: @order.TotalPrice</strong></td>
-                    </tr>
-                }
-            </tbody>
-        </table>
+                        <tr  style="background-color: #EBE3DB;">
+                            <td colspan="3" class="text-end fw-bold">Total: @order.TotalPrice.ToString("C")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
     }
 }
 else
 {
-    <h2>Cart</h2>
+    <h2 class="mb-4 ">Your Cart</h2>
     var userOrder = Model.FirstOrDefault();
 
     if (userOrder == null || userOrder.Items == null || !userOrder.Items.Any())
@@ -50,31 +52,40 @@ else
     }
     else
     {
-        <table class="table table-striped table-bordered table-hover">
-            <thead>
-                <tr>
-                    <th>Parfume Name</th>
-                    <th>Quantity</th>
-                    <th>Price</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var item in userOrder.Items)
-                {
+        <div class="table-responsive">
+            <table class="table table-striped table-bordered rounded shadow-sm">
+                <thead style="background-color: #D1C7BD;color:#3A2D2B ">
                     <tr>
-                        <td>@item.ParfumeName</td>
-                        <td>@item.Quantity</td>
-                        <td>@item.Price</td>
-                        <td>
-                            <a asp-action="DeleteFromCart" asp-controller="Order" asp-route-id="@item.ParfumeId"><img src="~/uploads/delete.svg" /></a>
-                        </td>
+                        <th scope="col">Perfume</th>
+                        <th scope="col">Quantity</th>
+                        <th scope="col">Price</th>
+                        <th scope="col">Actions</th>
                     </tr>
-                }
-                <tr>
-                    <td colspan="3"><strong>Total Price: @userOrder.TotalPrice</strong></td>
-                </tr>
-            </tbody>
-        </table>
-        <a class="btn btn-primary" asp-controller="Order" asp-action="Checkout">Checkout</a>
+                </thead>
+                <tbody>
+                    @foreach (var item in userOrder.Items)
+                    {
+                        <tr class="align-middle">
+                            <td>@item.ParfumeName</td>
+                            <td>@item.Quantity</td>
+                            <td>@item.Price.ToString("C")</td>
+                            <td>
+                                <a asp-action="DeleteFromCart" asp-controller="Order" asp-route-id="@item.ParfumeId" class="btn btn-sm btn-danger">
+                                    <img src="~/uploads/delete.svg" alt="Delete" style="height: 20px;" />
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                    <tr class="table-secondary" style="background-color: #EBE3DB;">
+                        <td colspan="4" class="text-end fw-bold">Total: @userOrder.TotalPrice.ToString("C")</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="d-flex gap-2">
+            <a class="btn btn-success" asp-controller="Order" asp-action="Checkout">Checkout</a>
+            <a class="btn btn-outline-primary" asp-controller="Parfume" asp-action="Index">Continue Shopping</a>
+        </div>
     }
 }

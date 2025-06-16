@@ -1,0 +1,24 @@
+﻿@{
+    ViewData["Title"] = "Order Confirmation";
+    var orderId = ViewData["OrderId"]?.ToString();
+}
+<link rel="stylesheet" href="~/css/perfume.css" />
+<link rel="stylesheet" href="~/css/site.css" />
+
+<div class="create-container" style="width:800px; margin-top:100px; margin-left:280px; text-align: center;">
+    @if (!string.IsNullOrEmpty(orderId))
+    {
+        <p>Your order has been placed successfully.</p>
+        <p><strong>Order ID:</strong> @orderId</p>
+    }
+    else
+    {
+        <p>Order ID could not be retrieved. Please check your orders or contact support.</p>
+    }
+
+    <a class="btn btn-primary mt-3" asp-controller="Home" asp-action="Index">Back to Home</a>
+</div>
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+}

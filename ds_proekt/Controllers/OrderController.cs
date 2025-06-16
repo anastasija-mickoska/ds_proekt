@@ -118,10 +118,13 @@ namespace ds_proekt.Controllers
             order.IsActive = false;
             await _firestoreService.UpdateOrderAsync(order);
 
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("OrderConfirmation", "Order", new { orderId = order.Id });
         }
-
-
+        public IActionResult OrderConfirmation(string orderId)
+        {
+            ViewData["OrderId"] = orderId;
+            return View();
+        }
 
     }
 }

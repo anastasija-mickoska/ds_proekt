@@ -3,7 +3,7 @@
     ViewData["Title"] = "Reviews";
     var searchString = ViewBag.SearchString as string;
 }
-
+<link rel="stylesheet" href="~/css/perfume.css" />
 <h2>Reviews</h2>
 @{
     string role = Context.Session.GetString("UserRole");
@@ -23,7 +23,7 @@
 
 @if (Model != null && Model.Any())
 {
-    <table class="table table-bordered table-striped">
+    <table class="table table-bordered table-striped table-hover">
             <thead>
                 <tr>
                     <th>Perfume</th>

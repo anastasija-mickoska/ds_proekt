@@ -53,3 +53,21 @@ body {
     text-align:center;
     font-size:1rem;
 }
+thead {
+    background-color:#3A2D28;
+    color:white;
+}
+
+.create-container {
+    background-color: #D1C7BD;
+    border: 1px solid #ccc;
+    border-radius: 15px;
+    padding: 20px;
+    margin: 20px;
+    margin-top: 100px;
+}
+.alert-info {
+    background-color:#D1C7BD;
+    border-color:#D1C7BD;
+    color:black;
+}

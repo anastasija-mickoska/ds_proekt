@@ -17,81 +17,80 @@ namespace ds_proekt.Controllers
         }
         public async Task<IActionResult> Index()
         {
-            var allOrders = await _firestoreService.GetOrdersAsync();
-            var allUsers = await _firestoreService.GetUsersAsync(); 
-            var allParfumes = await _firestoreService.GetParfumesAsync();
-
             string userId = HttpContext.Session.GetString("UserId");
             string role = HttpContext.Session.GetString("UserRole");
+            string email = HttpContext.Session.GetString("UserEmail");
 
             if (string.IsNullOrEmpty(userId))
             {
                 return RedirectToAction("Login", "User");
             }
 
+            var allOrders = await _firestoreService.GetOrdersAsync();
+
             var viewModelList = new List<OrderDisplayViewModel>();
+
+            foreach (var order in allOrders)
+            {
+                if (order.Items != null)
+                {
+                    var user = await _firestoreService.GetUserByIdAsync(order.UserId);
+
+                    var vm = new OrderDisplayViewModel
+                    {
+                        OrderId = order.Id,
+                        UserEmail = user?.Email ?? "Unknown",
+                        Items = order.Items,
+                        OrderDate = order.OrderDate,
+                        TotalPrice = order.TotalPrice
+                    };
+
+                    viewModelList.Add(vm);
+                }
+            }
+
+            ViewData["UserRole"] = role;
 
             if (role == "admin")
             {
-                foreach (var order in allOrders)
-                {
-                    if (order.Items != null)
-                    {
-                        //foreach (var item in order.Items)
-                        //{
-                        var user = await _firestoreService.GetUserByIdAsync(order.UserId);
-                            //var parfume = allParfumes.FirstOrDefault(p => p.ParfumeId == item.ParfumeId);
-
-                            viewModelList.Add(new OrderDisplayViewModel
-                            {
-                                OrderId = order.Id,
-                                UserEmail = user?.Email ?? "Unknown",
-                                //ParfumeName = parfume?.Name ?? "Unknown",
-                                //Quantity = item.Quantity,
-                                //Price = item.Price,
-                                OrderDate = order.OrderDate,
-                                TotalPrice = order.TotalPrice
-                            });
-                      //  }
-                    }
-                }
-
-                ViewData["UserRole"] = "admin";
                 return View(viewModelList);
             }
             else
             {
-                var userOrder = allOrders.FirstOrDefault(o => o.UserId == userId && o.IsActive == true);
-
-                if (userOrder != null && userOrder.Items != null)
-                {
-                    foreach (var item in userOrder.Items)
-                    {
-                        var parfume = allParfumes.FirstOrDefault(p => p.ParfumeId == item.ParfumeId);
-
-                        viewModelList.Add(new OrderDisplayViewModel
-                        {
-                           // OrderId = userOrder.Id,
-                           // UserEmail = ""
-                            Items = new List<CartItem>
-                            {
-                                new CartItem
-                                {
-                                    ParfumeName = parfume?.Name ?? "Unknown",
-                                    Quantity = item.Quantity,
-                                    Price = item.Price
-                                }
-                            },
-                          //  OrderDate = userOrder.OrderDate,
-                            TotalPrice = userOrder.TotalPrice
-                        });
-                    }
-                }
-
-                ViewData["UserRole"] = role;
-                return View(viewModelList);
+                var userOrders = viewModelList.Where(o => o.UserEmail == email && o.OrderDate == null).ToList();
+                return View(userOrders);
             }
         }
+
+
+        [HttpGet]
+        public async Task<IActionResult> DeleteFromCart(string id)
+        {
+            string userId = HttpContext.Session.GetString("UserId");
+            if (string.IsNullOrEmpty(userId))
+            {
+                return RedirectToAction("Login", "User");
+            }
+            var currentOrder = await _firestoreService.GetOrderByUserIdAsync(userId);
+            System.Diagnostics.Debug.WriteLine(currentOrder.Id, currentOrder.Items, currentOrder.OrderDate);
+            if (currentOrder == null || currentOrder.Items == null)
+            {
+                return NotFound("Order or items not found");
+            }
+            var itemToRemove = currentOrder.Items.FirstOrDefault(i => i.ParfumeId == id);
+            if (itemToRemove == null)
+            {
+                return NotFound("Item not found in your cart");
+            }
+
+            currentOrder.Items.Remove(itemToRemove);
+            currentOrder.TotalPrice = currentOrder.Items.Sum(i => i.Price * i.Quantity);
+
+            await _firestoreService.UpdateOrderAsync(currentOrder);
+
+            return RedirectToAction("Index");
+        }
+
 
 
         [HttpGet]

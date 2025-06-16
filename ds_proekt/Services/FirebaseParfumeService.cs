@@ -62,13 +62,27 @@ namespace ds_proekt.Services
         }
         public async Task UpdateOrderAsync(Order order)
         {
-            if (string.IsNullOrEmpty(order.Id))
-                throw new ArgumentException("Order ID must not be null or empty.");
+            var orderDoc = _firestoreDb.Collection("orders").Document(order.Id);
 
-            DocumentReference docRef = _firestoreDb.Collection("orders").Document(order.Id);
+            var updateData = new Dictionary<string, object>
+            {
+                { "UserId", order.UserId },
+                { "TotalPrice", order.TotalPrice },
+                { "OrderDate", order.OrderDate },
+                { "IsActive", order.IsActive },
+                { "Items", order.Items.Select(i => new Dictionary<string, object>
+                    {
+                        { "ParfumeId", i.ParfumeId },
+                        { "ParfumeName", i.ParfumeName },
+                        { "Quantity", i.Quantity },
+                        { "Price", i.Price }
+                    }).ToList()
+                }
+            };
 
-            await docRef.SetAsync(order);
+            await orderDoc.SetAsync(updateData, SetOptions.Overwrite);
         }
+
 
         public async Task<List<Order>> GetOrdersAsync()
         {
@@ -84,12 +98,46 @@ namespace ds_proekt.Services
 
             return orders;
         }
-
         public async Task<Order> GetOrderByUserIdAsync(string userId)
         {
             QuerySnapshot snapshot = await _firestoreDb.Collection("orders").WhereEqualTo("UserId", userId).WhereEqualTo("IsActive", true).Limit(1).GetSnapshotAsync();
-            return snapshot.Documents.FirstOrDefault()?.ConvertTo<Order>();
+
+            var doc = snapshot.Documents.FirstOrDefault();
+            if (doc == null)
+                return null;
+
+            var dict = doc.ToDictionary();
+            var order = new Order
+            {
+                Id = doc.Id,
+                UserId = dict.ContainsKey("UserId") ? dict["UserId"]?.ToString() : null,
+                TotalPrice = dict.ContainsKey("TotalPrice") && dict["TotalPrice"] != null ? Convert.ToDouble(dict["TotalPrice"]) : 0,
+                OrderDate = dict.ContainsKey("OrderDate") && dict["OrderDate"] != null ? (DateTime?)Convert.ToDateTime(dict["OrderDate"]) : null,
+                IsActive = dict.ContainsKey("IsActive") && dict["IsActive"] != null && Convert.ToBoolean(dict["IsActive"]),
+                Items = new List<CartItem>()
+            };
+
+
+            if (dict.ContainsKey("Items") && dict["Items"] is IEnumerable<object> items)
+            {
+                foreach (var itemObj in items)
+                {
+                    if (itemObj is Dictionary<string, object> itemDict)
+                    {
+                        var cartItem = new CartItem
+                        {
+                            ParfumeId = itemDict.ContainsKey("ParfumeId") ? itemDict["ParfumeId"].ToString() : null,
+                            ParfumeName = itemDict.ContainsKey("ParfumeName") ? itemDict["ParfumeName"].ToString() : null,
+                            Quantity = itemDict.ContainsKey("Quantity") ? Convert.ToInt32(itemDict["Quantity"]) : 0,
+                            Price = itemDict.ContainsKey("Price") ? Convert.ToDouble(itemDict["Price"]) : 0
+                        };
+                        order.Items.Add(cartItem);
+                    }
+                }
+            }
+            return order;
         }
+
 
         public async Task AddToCartAsync(CartItem item)
         {

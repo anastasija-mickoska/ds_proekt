@@ -21,26 +21,17 @@
                 <tr>
                     <th>Order ID</th>
                     <th>User Email</th>
-                    <th>Parfume Name</th>
-                    <th>Quantity</th>
-                    <th>Price</th>
                     <th>Date</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach (var order in Model)
                 {
-                    @* foreach (var item in order.Items)
-                    { *@
                         <tr>
                             <td>@order.OrderId</td>
                             <td>@order.UserEmail</td>
-                            @* <td>@item.ParfumeName</td>
-                            <td>@item.Quantity</td>
-                            <td>@item.Price</td> *@
                             <td>@(order.OrderDate?.ToString("g") ?? "In Progress")</td>
                         </tr>
-                    @* } *@
                     <tr>
                         <td colspan="6"><strong>Total Price: @order.TotalPrice</strong></td>
                     </tr>
@@ -75,6 +66,9 @@ else
                         <td>@item.ParfumeName</td>
                         <td>@item.Quantity</td>
                         <td>@item.Price</td>
+                        <td>
+                            <a asp-action="DeleteFromCart" asp-controller="Order" asp-route-id="@item.ParfumeId"><img src="~/uploads/delete.svg" /></a>
+                        </td>
                     </tr>
                 }
                 <tr>

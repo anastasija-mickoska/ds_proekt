@@ -3,7 +3,9 @@
 @{
     ViewData["Title"] = "Checkout";
 }
+<link rel="stylesheet" href="~/css/order.css" />
 
+<div class="create-container">
 <h2>Checkout</h2>
 
 <form asp-action="AddOrder" method="post">
@@ -27,7 +29,7 @@
 
     <button type="submit" class="btn btn-success">Place Order</button>
 </form>
-
+</div>
 @section Scripts {
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");

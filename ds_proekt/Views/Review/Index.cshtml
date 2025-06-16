@@ -3,47 +3,57 @@
     ViewData["Title"] = "Reviews";
     var searchString = ViewBag.SearchString as string;
 }
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+<link rel="stylesheet" href="~/css/review.css" />
+<h2 class="mb-4">Reviews</h2>
 
-<h2>Reviews</h2>
 @{
     string role = Context.Session.GetString("UserRole");
 }
 
 @if (role == "user")
 {
-    <a class="btn btn-primary" asp-controller="Review"  asp-action="Create">Add Review</a>
+    <a class="btn btn-success mb-3" asp-controller="Review" asp-action="Create">
+        <i class="bi bi-plus-circle"></i> Add Review
+    </a>
 }
 
-<form method="get" asp-controller="Review" asp-action="Index">
-    <div class="input-group mb-3">
+<form method="get" asp-controller="Review" asp-action="Index" class="mb-4">
+    <div class="input-group">
         <input type="text" name="searchString" class="form-control" placeholder="Search by perfume name..." value="@searchString" />
-        <button type="submit" class="btn btn-primary">Search</button>
+        <button type="submit" class="btn btn-primary">
+            <i class="bi bi-search"></i> Search
+        </button>
     </div>
 </form>
 
 @if (Model != null && Model.Any())
 {
-    <table class="table table-bordered table-striped">
-            <thead>
+    <div class="table-responsive">
+        <table class="table table-hover shadow-sm border rounded bg-white">
+            <thead class="text-center custom-thead">
                 <tr>
                     <th>Perfume</th>
                     <th>User</th>
                     <th>Rating</th>
-                    <th>Content</th>
+                    <th>Comment</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach (var review in Model)
                 {
-                    <tr>
+                    <tr class="align-middle">
                         <td>@review.ParfumeName</td>
                         <td>@review.UserEmail</td>
-                        <td>@review.Rating</td>
+                        <td>
+                            <span class="badge bg-custom text-dark">@review.Rating / 10</span>
+                        </td>
                         <td>@review.Comment</td>
                     </tr>
                 }
             </tbody>
-    </table>
+        </table>
+    </div>
 }
 else
 {
@@ -51,4 +61,3 @@ else
         No reviews found.
     </div>
 }
-

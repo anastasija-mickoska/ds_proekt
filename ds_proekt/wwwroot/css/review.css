@@ -1,0 +1,70 @@
+﻿.table {
+    border-radius: 0.5rem;
+    overflow: hidden;
+}
+
+.table th {
+   background-color: #D1C7BD;
+   color: white;
+}
+
+.table td, .table th {
+   vertical-align: middle;
+   text-align: center;
+}
+
+.table-hover tbody tr:hover {
+    background-color: #f1f1f1;
+}
+
+.badge {
+    font-size: 1rem;
+}
+.bg-custom {
+    background-color: #D1C7BD;
+}
+.custom-thead {
+    background-color: #D1C7BD;
+    color: #3A2D2B;
+}
+.btn-primary {
+    background-color: #3A2D2B;
+    border-color: #3A2D2B;
+    color: white;
+}
+
+    .btn-primary:hover {
+        background-color: #CBAD8D;
+        border-color: #CBAD8D;
+    }
+
+
+.btn-success {
+    background-color: #3A2D2B;
+    border-color: #3A2D2B;
+    color: white;
+}
+
+    .btn-success:hover {
+        background-color: #CBAD8D;
+        border-color: #CBAD8D;
+    }
+.create-container {
+    background-color: #D1C7BD;
+    border: 1px solid #ccc;
+    border-radius: 15px;
+    padding: 20px;
+    margin: 20px;
+    margin-top: 100px;
+}
+.btn-outline-primary {
+    color: #3A2D2B;
+    border-color: #3A2D2B;
+
+}
+
+    .btn-outline-primary:hover {
+        background-color: #CBAD8D;
+        color: white;
+        border-color: #CBAD8D;
+    }

@@ -138,6 +138,20 @@ namespace ds_proekt.Services
             return order;
         }
 
+        public async Task<Order> GetOrderByIdAsync(string orderId)
+        {
+            var docRef = _firestoreDb.Collection("Orders").Document(orderId);
+            var snapshot = await docRef.GetSnapshotAsync();
+
+            if (snapshot.Exists)
+            {
+                var order = snapshot.ConvertTo<Order>();
+                order.Id = snapshot.Id; 
+                return order;
+            }
+
+            return null;
+        }
 
         public async Task AddToCartAsync(CartItem item)
         {

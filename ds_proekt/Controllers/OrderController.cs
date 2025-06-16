@@ -113,14 +113,28 @@ namespace ds_proekt.Controllers
             order.OrderDate = DateTime.UtcNow;
             var userOrder = await _firestoreService.GetOrderByUserIdAsync(userId);
             order.Id = userOrder.Id;
+            if (userOrder == null)
+            {
+                return BadRequest("No active order found for user.");
+            }
             order.Items = userOrder.Items;
             order.TotalPrice = userOrder.Items.Sum(i => i.Quantity * i.Price);
             order.IsActive = false;
             await _firestoreService.UpdateOrderAsync(order);
 
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("CompleteOrder", new { id = order.Id });
         }
 
+        public async Task<IActionResult> CompleteOrder(string orderId)
+        {
+            var order = await _firestoreService.GetOrderByIdAsync(orderId); 
+            if (order == null)
+            {
+                return NotFound();
+            }
+
+            return View(order); 
+        }
 
 
     }

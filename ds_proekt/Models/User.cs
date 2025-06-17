@@ -6,9 +6,6 @@ namespace ds_proekt.Models
     [FirestoreData]
     public class User
     {
-        //[FirestoreProperty]
-        //public string Id { get; set; }
-
         [Required(ErrorMessage = "Name is required")]
         [StringLength(50)]
         [FirestoreProperty]

@@ -3,7 +3,7 @@ using FirebaseAdmin;
 using Google.Apis.Auth.OAuth2;
 using Microsoft.AspNetCore.Builder.Extensions;
 
-var pathToKey = Path.Combine(Directory.GetCurrentDirectory(), "ds-proekt-baa0c-firebase-adminsdk-fbsvc-a3c65714d0.json");
+var pathToKey = Path.Combine("secrets", "ds-proekt-baa0c-firebase-adminsdk-fbsvc-f0350e675c.json");
 Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", pathToKey);
 
 
